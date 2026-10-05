@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Automation Practice Lab — Selenium Interview Scenarios</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2128; --border:#30363d;
+    --text:#e6edf3; --muted:#8b949e; --accent:#58a6ff; --green:#3fb950;
+    --orange:#d29922; --red:#f85149; --purple:#bc8cff; --cyan:#39d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:15px; line-height:1.6;
+  }
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(13,17,23,.92); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+    padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  header h1{font-size:17px; font-weight:700; letter-spacing:-.3px}
+  header h1 span{color:var(--accent)}
+  .badge-stack{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{
+    font-size:11px; padding:3px 9px; border-radius:20px;
+    background:var(--panel2); border:1px solid var(--border); color:var(--muted);
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  .chip.g{color:var(--green); border-color:#1f4d2b}
+  .chip.o{color:var(--orange); border-color:#4d3a12}
+  .chip.p{color:var(--purple); border-color:#3d2d5c}
+
+  /* ---------- LAYOUT ---------- */
+  .layout{display:grid; grid-template-columns:250px 1fr; gap:0; align-items:start}
+  aside{
+    position:sticky; top:57px; height:calc(100vh - 57px); overflow-y:auto;
+    border-right:1px solid var(--border); padding:18px 0 60px;
+    background:var(--panel);
+  }
+  aside::-webkit-scrollbar{width:8px}
+  aside::-webkit-scrollbar-thumb{background:#2d333b; border-radius:4px}
+  .nav-group{padding:0 16px; margin-bottom:16px}
+  .nav-group h4{
+    font-size:10px; text-transform:uppercase; letter-spacing:1.2px;
+    color:var(--muted); margin-bottom:8px; font-weight:700;
+  }
+  aside a{
+    display:block; padding:6px 10px; border-radius:6px; color:#c9d1d9;
+    text-decoration:none; font-size:13px; margin-bottom:2px;
+    border-left:2px solid transparent; transition:.15s;
+  }
+  aside a:hover{background:var(--panel2); color:var(--accent); border-left-color:var(--accent)}
+
+  main{padding:24px 32px 120px; max-width:1100px}
+
+  /* ---------- FILTERS ---------- */
+  .filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px}
+  .filters button{
+    background:var(--panel2); color:var(--muted); border:1px solid var(--border);
+    padding:6px 14px; border-radius:20px; font-size:12.5px; cursor:pointer;
+    transition:.15s; font-family:inherit;
+  }
+  .filters button:hover{color:var(--text); border-color:#484f58}
+  .filters button.active{background:var(--accent); color:#0d1117; border-color:var(--accent); font-weight:600}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    margin-bottom:28px; overflow:hidden; scroll-margin-top:75px;
+  }
+  .card-head{
+    padding:14px 18px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    background:linear-gradient(180deg,#1a2029,#161b22);
+  }
+  .card-num{
+    font-family:ui-monospace,monospace; font-size:12px; font-weight:700;
+    background:var(--accent); color:#0d1117; padding:2px 8px; border-radius:5px;
+  }
+  .card-head h3{font-size:15.5px; font-weight:650; flex:1; min-width:200px}
+  .lvl{font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; text-transform:uppercase; letter-spacing:.5px}
+  .lvl.mid{background:#1c3a5e; color:#79c0ff}
+  .lvl.hard{background:#4d2f12; color:#e3b341}
+  .lvl.expert{background:#4a1f2b; color:#ff8a8a}
+  .dom{font-size:11px; color:var(--muted); font-family:ui-monospace,monospace}
+  .card-body{padding:18px}
+  .task{
+    background:#0d1117; border-left:3px solid var(--accent); border-radius:0 6px 6px 0;
+    padding:10px 14px; margin-bottom:16px; font-size:13.5px; color:#c9d1d9;
+  }
+  .task strong{color:var(--accent)}
+
+  /* ---------- DEMO SANDBOX ---------- */
+  .sandbox{
+    border:1px dashed #3d444d; border-radius:8px; padding:18px;
+    background:#10151c; margin-bottom:14px;
+  }
+  .sandbox-title{
+    font-size:10.5px; text-transform:uppercase; letter-spacing:1px;
+    color:var(--muted); margin-bottom:14px; font-weight:700;
+  }
+
+  /* ---------- FORM ELEMENTS ---------- */
+  input[type=text],input[type=email],input[type=password],input[type=date],select,textarea{
+    background:#0d1117; border:1px solid var(--border); color:var(--text);
+    padding:8px 11px; border-radius:6px; font-size:13.5px; font-family:inherit;
+    outline:none; transition:.15s; width:100%; max-width:280px;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(88,166,255,.12)}
+  label{font-size:13px; color:#c9d1d9; display:block; margin-bottom:5px}
+  .field{margin-bottom:13px}
+  button.btn{
+    background:var(--accent); color:#0d1117; border:none; padding:8px 16px;
+    border-radius:6px; font-size:13px; font-weight:650; cursor:pointer;
+    font-family:inherit; transition:.15s;
+  }
+  button.btn:hover{filter:brightness(1.12)}
+  button.btn:disabled{background:#30363d; color:#6e7681; cursor:not-allowed}
+  button.btn.sec{background:var(--panel2); color:var(--text); border:1px solid var(--border)}
+  button.btn.grn{background:var(--green)}
+  button.btn.red{background:var(--red); color:#fff}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end}
+
+  /* ---------- OUTPUT ---------- */
+  .out{
+    font-family:ui-monospace,monospace; font-size:12.5px; color:var(--cyan);
+    background:#0d1117; border:1px solid var(--border); border-radius:6px;
+    padding:9px 12px; margin-top:12px; min-height:36px;
+  }
+
+  /* ---------- CODE ---------- */
+  details{margin-top:14px; border:1px solid var(--border); border-radius:8px; overflow:hidden}
+  summary{
+    padding:10px 16px; background:var(--panel2); cursor:pointer; font-size:13px;
+    font-weight:600; color:var(--accent); user-select:none; list-style:none;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▶ "; font-size:10px; transition:.2s; display:inline-block}
+  details[open] summary::before{transform:rotate(90deg)}
+  summary:hover{background:#21262d}
+  pre{
+    background:#0d1117; padding:16px; overflow-x:auto; font-size:12.5px;
+    line-height:1.65; border-top:1px solid var(--border);
+  }
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:#c9d1d9}
+  .kw{color:#ff7b72} .ty{color:#79c0ff} .st{color:#a5d6ff} .cm{color:#8b949e; font-style:italic}
+  .fn{color:#d2a8ff} .nm{color:#79c0ff}
+
+  /* ---------- SPECIFIC WIDGETS ---------- */
+  .product-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px}
+  .product{
+    background:var(--panel2); border:1px solid var(--border); border-radius:8px;
+    padding:12px; text-align:center; transition:.15s;
+  }
+  .product:hover{border-color:var(--accent)}
+  .product .pname{font-size:13px; font-weight:600; margin-bottom:4px}
+  .product .pprice{font-size:13px; color:var(--green); font-family:ui-monospace,monospace; margin-bottom:8px}
+  .cart-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--red); color:#fff; font-size:11px; font-weight:700;
+    min-width:20px; height:20px; border-radius:10px; padding:0 6px; margin-left:8px;
+  }
+  table{width:100%; border-collapse:collapse; font-size:13px}
+  th,td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--border)}
+  th{background:var(--panel2); font-weight:650; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); cursor:pointer; user-select:none}
+  th:hover{color:var(--accent)}
+  tbody tr:hover{background:#1c2128}
+  .pill{padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600}
+  .pill.ok{background:#1f4d2b; color:#56d364}
+  .pill.no{background:#4d1f1f; color:#ff8080}
+  .pill.wait{background:#4d3a12; color:#e3b341}
+
+  /* suggestions */
+  .suggest{
+    position:absolute; background:var(--panel2); border:1px solid var(--border);
+    border-radius:6px; width:280px; max-height:180px; overflow-y:auto; z-index:50;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);
+  }
+  .suggest div{padding:8px 12px; font-size:13px; cursor:pointer}
+  .suggest div:hover{background:#2d333b; color:var(--accent)}
+
+  /* modal */
+  .overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.65); display:none;
+    align-items:center; justify-content:center; z-index:200;
+  }
+  .overlay.show{display:flex}
+  .modal{
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:24px; width:min(420px,90vw); box-shadow:0 20px 60px rgba(0,0,0,.6);
+  }
+  .modal h3{margin-bottom:8px; font-size:16px}
+  .modal p{color:var(--muted); font-size:13.5px; margin-bottom:18px}
+
+  /* toast */
+  #toast{
+    position:fixed; bottom:28px; right:28px; background:var(--green); color:#0d1117;
+    padding:12px 20px; border-radius:8px; font-weight:650; font-size:13.5px;
+    transform:translateY(120px); transition:.35s; z-index:300; box-shadow:0 8px 24px rgba(0,0,0,.5);
+  }
+  #toast.show{transform:translateY(0)}
+
+  /* iframe */
+  iframe{border:1px solid var(--border); border-radius:8px; width:100%; height:170px; background:#0d1117}
+
+  /* hover menu */
+  .hover-wrap{position:relative; display:inline-block}
+  .hover-menu{
+    display:none; position:absolute; top:100%; left:0; background:var(--panel2);
+    border:1px solid var(--border); border-radius:8px; min-width:180px; z-index:60;
+    padding:6px 0; box-shadow:0 8px 24px rgba(0,0,0,.5);
+  }
+  .hover-wrap:hover .hover-menu{display:block}
+  .hover-menu div{padding:8px 14px; font-size:13px; cursor:pointer}
+  .hover-menu div:hover{background:#2d333b; color:var(--accent)}
+
+  /* context menu */
+  #ctxMenu{
+    display:none; position:fixed; background:var(--panel2); border:1px solid var(--border);
+    border-radius:8px; padding:6px 0; z-index:150; min-width:160px;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);
+  }
+  #ctxMenu div{padding:8px 14px; font-size:13px; cursor:pointer}
+  #ctxMenu div:hover{background:#2d333b; color:var(--accent)}
+
+  /* drag */
+  .drag-area{display:flex; gap:24px; align-items:center; flex-wrap:wrap}
+  #dragItem{
+    background:var(--purple); color:#0d1117; padding:14px 20px; border-radius:8px;
+    font-weight:700; font-size:13px; cursor:grab; user-select:none; position:relative;
+  }
+  #dropZone{
+    width:180px; height:90px; border:2px dashed #484f58; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:12.5px;
+    color:var(--muted); transition:.2s;
+  }
+  #dropZone.dropped{border-color:var(--green); border-style:solid; background:#0f2417; color:var(--green)}
+
+  /* calendar */
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:3px; max-width:280px}
+  .cal-dow{text-align:center; font-size:11px; color:var(--muted); padding:4px 0; font-weight:700}
+  .cal-day{
+    text-align:center; padding:7px 0; font-size:12.5px; border-radius:5px;
+    cursor:pointer; transition:.12s; border:1px solid transparent;
+  }
+  .cal-day:hover{background:var(--panel2); border-color:var(--accent)}
+  .cal-day.selected{background:var(--accent); color:#0d1117; font-weight:700}
+  .cal-head{font-size:13.5px; font-weight:650; margin-bottom:10px; color:var(--accent)}
+
+  /* slider */
+  input[type=range]{
+    -webkit-appearance:none; width:100%; max-width:320px; height:6px;
+    background:var(--border); border-radius:3px; outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:20px; height:20px; border-radius:50%;
+    background:var(--accent); cursor:pointer; border:3px solid #0d1117;
+  }
+
+  /* scroll box */
+  .scrollbox{
+    height:220px; overflow-y:auto; border:1px solid var(--border);
+    border-radius:8px; padding:12px; background:#0d1117;
+  }
+  .scrollbox::-webkit-scrollbar{width:8px}
+  .scrollbox::-webkit-scrollbar-thumb{background:#2d333b; border-radius:4px}
+  .lazy-item{
+    padding:11px 14px; border-bottom:1px solid #21262d; font-size:13px;
+    display:flex; justify-content:space-between;
+  }
+
+  /* steps */
+  .steps{display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap}
+  .step{
+    flex:1; min-width:90px; text-align:center; padding:8px 4px; font-size:11.5px;
+    border-radius:6px; background:var(--panel2); color:var(--muted);
+    border:1px solid var(--border); font-weight:600;
+  }
+  .step.active{background:var(--accent); color:#0d1117; border-color:var(--accent)}
+  .step.done{background:#1f4d2b; color:#56d364; border-color:#1f4d2b}
+  .wizard-panel{display:none}
+  .wizard-panel.active{display:block}
+
+  /* shadow host */
+  #shadowHost{
+    border:1px solid var(--border); border-radius:8px; padding:16px; background:#10151c;
+  }
+
+  /* Q&A */
+  .qa{border-left:3px solid var(--purple); padding-left:16px; margin-bottom:22px}
+  .qa h4{font-size:14px; color:var(--purple); margin-bottom:6px}
+  .qa p{font-size:13.5px; color:#c9d1d9}
+
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr}
+    aside{position:static; height:auto; border-right:none; border-bottom:1px solid var(--border)}
+    main{padding:20px 16px 100px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧪 QA Automation <span>Practice Lab</span></h1>
+  <div class="badge-stack">
+    <span class="chip">Selenium 4</span>
+    <span class="chip g">Java</span>
+    <span class="chip p">Appium</span>
+    <span class="chip o">Rest Assured</span>
+    <span class="chip">TestNG</span>
+    <span class="chip">Extent Reports</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside>
+    <div class="nav-group">
+      <h4>Core Challenges</h4>
+      <a href="#s01">01 · Dynamic Locators &amp; Waits</a>
+      <a href="#s02">02 · Autocomplete Search</a>
+      <a href="#s03">03 · Cart &amp; Badge Updates</a>
+      <a href="#s04">04 · Table Sort &amp; Pagination</a>
+      <a href="#s05">05 · Coupon Validation</a>
+    </div>
+    <div class="nav-group">
+      <h4>Healthcare Domain</h4>
+      <a href="#s06">06 · Multi-Step Wizard</a>
+      <a href="#s07">07 · Custom Date Picker</a>
+      <a href="#s08">08 · File Upload</a>
+      <a href="#s09">09 · Checkbox / Radio Groups</a>
+    </div>
+    <div class="nav-group">
+      <h4>Banking &amp; Alerts</h4>
+      <a href="#s10">10 · JS Alerts / Confirm / Prompt</a>
+      <a href="#s11">11 · Modal &amp; Toast</a>
+      <a href="#s20">20 · Filterable Web Table</a>
+    </div>
+    <div class="nav-group">
+      <h4>Advanced DOM</h4>
+      <a href="#s12">12 · iframe &amp; Nested Frames</a>
+      <a href="#s13">13 · Shadow DOM</a>
+      <a href="#s14">14 · Multiple Windows</a>
+      <a href="#s18">18 · Stale Element Handling</a>
+    </div>
+    <div class="nav-group">
+      <h4>Actions &amp; Gestures</h4>
+      <a href="#s15">15 · Hover / Right / Double Click</a>
+      <a href="#s16">16 · Drag &amp; Drop</a>
+      <a href="#s17">17 · Slider &amp; Keyboard</a>
+      <a href="#s19">19 · Lazy Load / Infinite Scroll</a>
+    </div>
+    <div class="nav-group">
+      <h4>Reference</h4>
+      <a href="#qa">Interview Q&amp;A</a>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main>
+
+    <div class="filters">
+      <button class="active" data-filter="all">All Scenarios</button>
+      <button data-filter="ecommerce">🛒 E-commerce</button>
+      <button data-filter="healthcare">🏥 Healthcare</button>
+      <button data-filter="banking">🏦 Banking</button>
+      <button data-filter="general">⚙️ General</button>
+    </div>
+
+    <!-- ============ 01 ============ -->
+    <section class="card" id="s01" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">01</span>
+        <h3>Dynamic Locators &amp; Explicit Waits</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> The username field has a <em>random ID on every page load</em>.
+          A second field appears only after 3 seconds. A third element self-destructs after 5 seconds.
+          The submit button stays disabled for 4 seconds. Automate the full flow without using
+          <code>Thread.sleep()</code>.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox</div>
+          <div class="row" style="margin-bottom:14px">
+            <div>
+              <label>Username <span style="color:var(--muted);font-size:11px">(id changes on reload)</span></label>
+              <input type="text" id="dyn-a1b2" data-testid="dyn-user" placeholder="enter username">
+            </div>
+            <button class="btn sec" onclick="regenId()">🔄 Regenerate ID</button>
+          </div>
+
+          <div class="row" style="margin-bottom:14px">
+            <button class="btn sec" onclick="revealDelayed()">Reveal Delayed Field</button>
+            <div id="delayedSlot" style="min-width:220px"></div>
+          </div>
+
+          <div class="row" style="margin-bottom:14px">
+            <button class="btn sec" onclick="startDisappear()">Start 5s Disappearing Element</button>
+            <div id="vanishSlot">
+              <span class="pill wait" id="vanishEl">I vanish in 5s ⏳</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <button class="btn" id="delayedBtn" disabled onclick="document.getElementById('out01').textContent='✅ Submit clicked at '+new Date().toLocaleTimeString()">
+              Submit (disabled 4s)
+            </button>
+            <button class="btn sec" onclick="armDelayedBtn()">Arm 4s Enable</button>
+          </div>
+
+          <div class="out" id="out01">waiting…</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ✅ Never hardcode a dynamic id — use stable attributes or prefixes</span>
+<span class="ty">WebDriverWait</span> wait = <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">15</span>));
+
+<span class="cm">// 1. Dynamic ID — anchor on data-testid</span>
+<span class="ty">WebElement</span> user = driver.findElement(<span class="ty">By</span>.cssSelector(<span class="st">"[data-testid='dyn-user']"</span>));
+user.sendKeys(<span class="st">"qa_engineer"</span>);
+
+<span class="cm">// 1b. Alternative — match by ID prefix with XPath</span>
+<span class="ty">WebElement</span> user2 = driver.findElement(
+        <span class="ty">By</span>.xpath(<span class="st">"//input[starts-with(@id,'dyn-')]"</span>));
+
+<span class="cm">// 2. Element that appears after a delay — NEVER Thread.sleep()</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[text()='Reveal Delayed Field']"</span>)).click();
+<span class="ty">WebElement</span> late = wait.until(
+        <span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"lateField"</span>)));
+late.sendKeys(<span class="st">"appeared"</span>);
+
+<span class="cm">// 3. Element that disappears — wait for invisibility</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[contains(.,'Disappearing')]"</span>)).click();
+wait.until(<span class="ty">ExpectedConditions</span>.invisibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"vanishEl"</span>)));
+
+<span class="cm">// 4. Button enabled after delay — use elementToBeClickable</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[contains(.,'Arm 4s')]"</span>)).click();
+<span class="ty">WebElement</span> submit = wait.until(
+        <span class="ty">ExpectedConditions</span>.elementToBeClickable(<span class="ty">By</span>.id(<span class="st">"delayedBtn"</span>)));
+submit.click();
+
+<span class="cm">// 💡 Interview tip: mention FluentWait with polling + ignored exceptions</span>
+<span class="kw">new</span> <span class="ty">FluentWait</span>&lt;<span class="ty">WebDriver</span>&gt;(driver)
+    .withTimeout(<span class="nm">Duration</span>.ofSeconds(<span class="nm">20</span>))
+    .pollingEvery(<span class="nm">Duration</span>.ofMillis(<span class="nm">300</span>))
+    .ignoring(<span class="ty">NoSuchElementException</span>.class)
+    .until(d -&gt; d.findElement(<span class="ty">By</span>.id(<span class="st">"lateField"</span>)).isDisplayed());</code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 02 ============ -->
+    <section class="card" id="s02" data-domain="ecommerce">
+      <div class="card-head">
+        <span class="card-num">02</span>
+        <h3>Autocomplete / Typeahead Search</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">e-commerce</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Type at least 2 characters to trigger a suggestion list.
+          Select <em>"iPhone 15 Pro"</em> from the dropdown — but the list re-renders on every keystroke,
+          so a naive <code>findElements</code> call will throw <code>StaleElementReferenceException</code>.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Product Search</div>
+          <div style="position:relative">
+            <input type="text" id="searchInput" placeholder="Search products…" autocomplete="off"
+                   oninput="handleSearch(this.value)" style="max-width:320px">
+            <div id="suggestBox" class="suggest" style="display:none"></div>
+          </div>
+          <div class="out" id="out02">No product selected</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">WebElement</span> search = driver.findElement(<span class="ty">By</span>.id(<span class="st">"searchInput"</span>));
+search.clear();
+search.sendKeys(<span class="st">"ip"</span>);
+
+<span class="ty">WebDriverWait</span> wait = <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">10</span>));
+
+<span class="cm">// Wait for the suggestion container to render</span>
+wait.until(<span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(
+        <span class="ty">By</span>.cssSelector(<span class="st">"#suggestBox div"</span>)));
+
+<span class="cm">// ❌ BAD — list re-renders on every keystroke → stale element</span>
+<span class="cm">// List&lt;WebElement&gt; items = driver.findElements(By.cssSelector("#suggestBox div"));</span>
+<span class="cm">// items.get(0).click();</span>
+
+<span class="cm">// ✅ GOOD — re-locate inside the loop and match by text</span>
+<span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; suggestions = driver.findElements(<span class="ty">By</span>.cssSelector(<span class="st">"#suggestBox div"</span>));
+<span class="kw">for</span> (<span class="ty">WebElement</span> s : suggestions) {
+    <span class="kw">if</span> (s.getText().trim().equalsIgnoreCase(<span class="st">"iPhone 15 Pro"</span>)) {
+        s.click();
+        <span class="kw">break</span>;
+    }
+}
+
+<span class="cm">// ✅ BEST — XPath text match avoids iterating entirely</span>
+wait.until(<span class="ty">ExpectedConditions</span>.elementToBeClickable(
+        <span class="ty">By</span>.xpath(<span class="st">"//div[@id='suggestBox']/div[normalize-space()='iPhone 15 Pro']"</span>)))
+    .click();
+
+<span class="cm">// 💡 Pro move: press ARROW_DOWN + ENTER instead of clicking</span>
+search.sendKeys(<span class="ty">Keys</span>.ARROW_DOWN, <span class="ty">Keys</span>.ENTER);
+
+<span class="cm">// Assert the selection landed</span>
+<span class="ty">Assert</span>.assertEquals(driver.findElement(<span class="ty">By</span>.id(<span class="st">"out02"</span>)).getText(),
+                     <span class="st">"Selected: iPhone 15 Pro"</span>);</code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 03 ============ -->
+    <section class="card" id="s03" data-domain="ecommerce">
+      <div class="card-head">
+        <span class="card-num">03</span>
+        <h3>Add to Cart &amp; Live Badge Counter</h3>
+        <span class="lvl mid">Medium</span>
+        <span class="dom">e-commerce</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Add 3 different products to the cart. Verify the badge shows <strong>3</strong>.
+          Remove one item, verify the badge decrements and the total price recalculates correctly
+          (floating-point comparison!).
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">
+            Cart <span class="cart-badge" id="cartBadge">0</span>
+            &nbsp;&nbsp;<span style="color:var(--muted)">Total: ₹<span id="cartTotal">0.00</span></span>
+          </div>
+          <div class="product-grid" id="productGrid"></div>
+          <div class="out" id="out03">Cart is empty</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// Add each product by its data-product attribute (stable, not index-based)</span>
+<span class="ty">String</span>[] items = {<span class="st">"Wireless Mouse"</span>, <span class="st">"Mechanical Keyboard"</span>, <span class="st">"4K Monitor"</span>};
+
+<span class="kw">for</span> (<span class="ty">String</span> name : items) {
+    driver.findElement(<span class="ty">By</span>.xpath(
+        <span class="st">"//div[@class='product'][.//div[text()='"</span> + name + <span class="st">"']]//button"</span>)).click();
+}
+
+<span class="cm">// Assert badge count</span>
+<span class="ty">WebElement</span> badge = driver.findElement(<span class="ty">By</span>.id(<span class="st">"cartBadge"</span>));
+<span class="ty">Assert</span>.assertEquals(badge.getText(), <span class="st">"3"</span>);
+
+<span class="cm">// ⚠️ Floating-point: NEVER use assertEquals on doubles directly</span>
+<span class="ty">String</span> rawTotal = driver.findElement(<span class="ty">By</span>.id(<span class="st">"cartTotal"</span>)).getText(); <span class="cm">// "4799.00"</span>
+<span class="ty">double</span> actual = <span class="ty">Double</span>.parseDouble(rawTotal);
+<span class="ty">Assert</span>.assertEquals(actual, <span class="nm">4799.00</span>, <span class="nm">0.01</span>, <span class="st">"Cart total mismatch"</span>);
+
+<span class="cm">// Remove an item and wait for the badge to update (it is async)</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//tr[.//td[text()='Wireless Mouse']]//button[text()='Remove']"</span>)).click();
+
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">5</span>))
+    .until(<span class="ty">ExpectedConditions</span>.textToBePresentInElement(badge, <span class="st">"2"</span>));
+
+<span class="cm">// 💡 Interview tip: mention textToBePresentInElement — retries until text matches</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 04 ============ -->
+    <section class="card" id="s04" data-domain="ecommerce">
+      <div class="card-head">
+        <span class="card-num">04</span>
+        <h3>Table Sorting &amp; Pagination</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">e-commerce</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Click the <em>Price</em> header to sort ascending. Verify the column is actually
+          sorted numerically (not lexicographically). Then navigate to page 2 and assert the row count.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Order History</div>
+          <table id="orderTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable('id')">Order ID</th>
+                <th onclick="sortTable('product')">Product</th>
+                <th onclick="sortTable('price')">Price (₹)</th>
+                <th onclick="sortTable('status')">Status</th>
+              </tr>
+            </thead>
+            <tbody id="orderBody"></tbody>
+          </table>
+          <div class="row" style="margin-top:14px; align-items:center">
+            <button class="btn sec" onclick="changePage(-1)">← Prev</button>
+            <span style="font-size:13px; color:var(--muted)">Page <span id="pageNum">1</span> of 3</span>
+            <button class="btn sec" onclick="changePage(1)">Next →</button>
+          </div>
+          <div class="out" id="out04">Click a header to sort</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// Click the Price header</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//table[@id='orderTable']//th[contains(.,'Price')]"</span>)).click();
+
+<span class="cm">// ⚠️ Table re-renders after sort — grab rows AFTER the click, not before</span>
+<span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; priceCells = driver.findElements(
+        <span class="ty">By</span>.xpath(<span class="st">"//tbody[@id='orderBody']/tr/td[3]"</span>));
+
+<span class="ty">List</span>&lt;<span class="ty">Double</span>&gt; actual = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();
+<span class="kw">for</span> (<span class="ty">WebElement</span> c : priceCells) {
+    actual.add(<span class="ty">Double</span>.parseDouble(c.getText().replace(<span class="st">","</span>, <span class="st">""</span>)));
+}
+
+<span class="cm">// Build the expected sorted copy and compare</span>
+<span class="ty">List</span>&lt;<span class="ty">Double</span>&gt; expected = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;(actual);
+<span class="ty">Collections</span>.sort(expected);
+
+<span class="ty">Assert</span>.assertEquals(actual, expected, <span class="st">"Price column is not sorted ascending"</span>);
+
+<span class="cm">// ---- Pagination ----</span>
+<span class="ty">String</span> firstRowPage1 = driver.findElement(
+        <span class="ty">By</span>.cssSelector(<span class="st">"#orderBody tr:first-child td:first-child"</span>)).getText();
+
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[contains(.,'Next')]"</span>)).click();
+
+<span class="cm">// Wait until the table content actually changes (avoid flaky assertion)</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">5</span>)).until(
+    <span class="ty">ExpectedConditions</span>.not(
+        <span class="ty">ExpectedConditions</span>.textToBePresentInElementLocated(
+            <span class="ty">By</span>.cssSelector(<span class="st">"#orderBody tr:first-child td:first-child"</span>), firstRowPage1)));
+
+<span class="ty">Assert</span>.assertEquals(driver.findElement(<span class="ty">By</span>.id(<span class="st">"pageNum"</span>)).getText(), <span class="st">"2"</span>);
+
+<span class="cm">// 💡 Interview tip: extracting a whole column into a List is the classic</span>
+<span class="cm">//    "WebTable" question. Mention removing ₹ / commas before parsing.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 05 ============ -->
+    <section class="card" id="s05" data-domain="ecommerce">
+      <div class="card-head">
+        <span class="card-num">05</span>
+        <h3>Coupon Code Validation &amp; Error Messages</h3>
+        <span class="lvl mid">Medium</span>
+        <span class="dom">e-commerce</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Validate three states — invalid coupon (error), expired coupon (error),
+          and valid coupon <code>QA2026</code> (success + discount applied). Assert on the message text and CSS class.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Checkout</div>
+          <div class="row">
+            <div>
+              <label>Coupon Code</label>
+              <input type="text" id="couponInput" placeholder="Try QA2026, EXPIRED, or anything">
+            </div>
+            <button class="btn" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div class="out" id="out05">No coupon applied</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// Data-driven approach — perfect for a TestNG @DataProvider</span>
+<span class="ty">Object</span>[][] data = {
+    {<span class="st">"INVALID123"</span>, <span class="st">"Invalid coupon code"</span>, <span class="st">"error"</span>},
+    {<span class="st">"EXPIRED"</span>,    <span class="st">"Coupon has expired"</span>, <span class="st">"error"</span>},
+    {<span class="st">"QA2026"</span>,     <span class="st">"Coupon applied"</span>,     <span class="st">"success"</span>}
+};
+
+<span class="kw">for</span> (<span class="ty">Object</span>[] row : data) {
+    <span class="ty">WebElement</span> input = driver.findElement(<span class="ty">By</span>.id(<span class="st">"couponInput"</span>));
+    input.clear();
+    input.sendKeys((<span class="ty">String</span>) row[<span class="nm">0</span>]);
+    driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[text()='Apply']"</span>)).click();
+
+    <span class="ty">WebElement</span> msg = <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">5</span>))
+        .until(<span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"out05"</span>)));
+
+    <span class="ty">Assert</span>.assertTrue(msg.getText().contains((<span class="ty">String</span>) row[<span class="nm">1</span>]),
+        <span class="st">"Message mismatch for coupon: "</span> + row[<span class="nm">0</span>]);
+
+    <span class="cm">// Assert on the CSS class — validates the UI state, not just the text</span>
+    <span class="ty">Assert</span>.assertTrue(msg.getAttribute(<span class="st">"class"</span>).contains((<span class="ty">String</span>) row[<span class="nm">2</span>]));
+}
+
+<span class="cm">// 💡 Interview tip: mention that asserting only on text is weak — always</span>
+<span class="cm">//    combine text + class + enabled state for a robust validation.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 06 ============ -->
+    <section class="card" id="s06" data-domain="healthcare">
+      <div class="card-head">
+        <span class="card-num">06</span>
+        <h3>Multi-Step Appointment Wizard</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">healthcare</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Complete a 4-step patient appointment wizard. Each step validates before
+          allowing <em>Next</em>. On the final step, capture the generated appointment ID and assert the
+          confirmation summary contains the correct patient name and department.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — MediCare Appointment</div>
+          <div class="steps">
+            <div class="step active" id="stepInd1">1 · Patient</div>
+            <div class="step" id="stepInd2">2 · Department</div>
+            <div class="step" id="stepInd3">3 · Schedule</div>
+            <div class="step" id="stepInd4">4 · Confirm</div>
+          </div>
+
+          <div class="wizard-panel active" id="wp1">
+            <div class="field">
+              <label>Patient Full Name</label>
+              <input type="text" id="patName" placeholder="e.g. Ravi Kumar">
+            </div>
+            <div class="field">
+              <label>Mobile Number</label>
+              <input type="text" id="patPhone" placeholder="10-digit mobile">
+            </div>
+          </div>
+
+          <div class="wizard-panel" id="wp2">
+            <div class="field">
+              <label>Department</label>
+              <select id="patDept">
+                <option value="">-- Select --</option>
+                <option>Cardiology</option>
+                <option>Neurology</option>
+                <option>Orthopaedics</option>
+                <option>Dermatology</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Consultation Type</label>
+              <select id="patType">
+                <option value="">-- Select --</option>
+                <option>In-Person</option>
+                <option>Video Consult</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="wizard-panel" id="wp3">
+            <div class="field">
+              <label>Preferred Date (mm/dd/yyyy)</label>
+              <input type="text" id="patDate" placeholder="12/25/2026">
+            </div>
+            <div class="field">
+              <label>Time Slot</label>
+              <select id="patSlot">
+                <option value="">-- Select --</option>
+                <option>09:00 AM</option>
+                <option>11:30 AM</option>
+                <option>03:00 PM</option>
+                <option>06:30 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="wizard-panel" id="wp4">
+            <div style="font-size:13.5px; line-height:2" id="summaryBox"></div>
+          </div>
+
+          <div class="row" style="margin-top:16px">
+            <button class="btn sec" id="wizBack" onclick="wizNav(-1)" disabled>← Back</button>
+            <button class="btn" id="wizNext" onclick="wizNav(1)">Next →</button>
+          </div>
+          <div class="out" id="out06">Step 1 of 4</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">WebDriverWait</span> wait = <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">10</span>));
+
+<span class="cm">// ---- STEP 1 ----</span>
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"patName"</span>)).sendKeys(<span class="st">"Ravi Kumar"</span>);
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"patPhone"</span>)).sendKeys(<span class="st">"9876543210"</span>);
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"wizNext"</span>)).click();
+
+<span class="cm">// Wait for step 2 panel to become visible — panel visibility is the sync point</span>
+wait.until(<span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"wp2"</span>)));
+
+<span class="cm">// ---- STEP 2 ---- use Select, never click dropdown options manually</span>
+<span class="ty">Select</span> dept = <span class="kw">new</span> <span class="ty">Select</span>(driver.findElement(<span class="ty">By</span>.id(<span class="st">"patDept"</span>)));
+dept.selectByVisibleText(<span class="st">"Cardiology"</span>);
+
+<span class="ty">Select</span> type = <span class="kw">new</span> <span class="ty">Select</span>(driver.findElement(<span class="ty">By</span>.id(<span class="st">"patType"</span>)));
+type.selectByValue(<span class="st">"In-Person"</span>);
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"wizNext"</span>)).click();
+wait.until(<span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"wp3"</span>)));
+
+<span class="cm">// ---- STEP 3 ----</span>
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"patDate"</span>)).sendKeys(<span class="st">"12/25/2026"</span>);
+<span class="kw">new</span> <span class="ty">Select</span>(driver.findElement(<span class="ty">By</span>.id(<span class="st">"patSlot"</span>))).selectByVisibleText(<span class="st">"11:30 AM"</span>);
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"wizNext"</span>)).click();
+
+<span class="cm">// ---- STEP 4 ---- assert the summary</span>
+<span class="ty">WebElement</span> summary = wait.until(
+        <span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"summaryBox"</span>)));
+
+<span class="ty">Assert</span>.assertTrue(summary.getText().contains(<span class="st">"Ravi Kumar"</span>));
+<span class="ty">Assert</span>.assertTrue(summary.getText().contains(<span class="st">"Cardiology"</span>));
+
+<span class="cm">// Capture the generated appointment id with a regex</span>
+<span class="ty">String</span> apptId = summary.getText().replaceAll(<span class="st">".*(APT-[0-9]+).*"</span>, <span class="st">"$1"</span>);
+System.out.println(<span class="st">"Appointment ID = "</span> + apptId);
+
+<span class="cm">// 💡 Interview tip: a Page Object Model here is the expected answer —</span>
+<span class="cm">//    AppointmentWizardPage with nextStep(), fillPatient(), confirm() methods.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 07 ============ -->
+    <section class="card" id="s07" data-domain="healthcare">
+      <div class="card-head">
+        <span class="card-num">07</span>
+        <h3>Custom Date Picker (No &lt;input type=date&gt;)</h3>
+        <span class="lvl expert">Expert</span>
+        <span class="dom">healthcare</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> This calendar is built entirely from <code>&lt;div&gt;</code> elements —
+          <code>sendKeys()</code> will fail. Select the <strong>18th</strong> of the current month and
+          verify the readonly input updates. Then handle the <em>"next month"</em> navigation case.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Appointment Date</div>
+          <div class="row" style="align-items:flex-start">
+            <div>
+              <label>Selected Date</label>
+              <input type="text" id="apptDate" readonly placeholder="click a date →">
+              <div id="calendar" style="margin-top:16px"></div>
+            </div>
+          </div>
+          <div class="out" id="out07">No date selected</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ❌ sendKeys() will throw ElementNotInteractableException on a readonly div-calendar</span>
+<span class="cm">// ✅ Click the day cell directly</span>
+
+<span class="ty">String</span> targetDay = <span class="st">"18"</span>;
+
+<span class="ty">WebElement</span> day = <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">10</span>))
+    .until(<span class="ty">ExpectedConditions</span>.elementToBeClickable(
+        <span class="ty">By</span>.xpath(<span class="st">"//div[@id='calendar']//span[@class='cal-day' and @data-day='"</span>
+                     + targetDay + <span class="st">"']"</span>)));
+day.click();
+
+<span class="cm">// Verify the readonly input got populated</span>
+<span class="ty">String</span> picked = driver.findElement(<span class="ty">By</span>.id(<span class="st">"apptDate"</span>))
+                        .getAttribute(<span class="st">"value"</span>);   <span class="cm">// ⚠️ getAttribute("value"), NOT getText()</span>
+<span class="ty">Assert</span>.assertTrue(picked.startsWith(<span class="st">"18/"</span>), <span class="st">"Wrong date picked: "</span> + picked);
+
+<span class="cm">// ---- Handling "next month" navigation ----</span>
+<span class="cm">// Loop forward until the target month header matches, max 12 attempts</span>
+<span class="ty">String</span> targetMonth = <span class="st">"December 2026"</span>;
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">12</span>; i++) {
+    <span class="ty">String</span> header = driver.findElement(<span class="ty">By</span>.cssSelector(<span class="st">"#calendar .cal-head"</span>)).getText();
+    <span class="kw">if</span> (header.equals(targetMonth)) <span class="kw">break</span>;
+    driver.findElement(<span class="ty">By</span>.cssSelector(<span class="st">"#calendar .next-month"</span>)).click();
+}
+
+<span class="cm">// 💡 Interview tip: the two gotchas interviewers look for are</span>
+<span class="cm">//    (1) getAttribute("value") for readonly inputs, and</span>
+<span class="cm">//    (2) a bounded loop instead of hardcoding "click next 3 times".</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 08 ============ -->
+    <section class="card" id="s08" data-domain="healthcare">
+      <div class="card-head">
+        <span class="card-num">08</span>
+        <h3>File Upload — Hidden Input &amp; Drag Zone</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">healthcare</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Upload a medical report PDF. The visible "Choose File" button is a styled
+          <code>&lt;label&gt;</code>; the real <code>&lt;input type="file"&gt;</code> is hidden with
+          <code>display:none</code>. Handle both the hidden-input case and the drag-drop case.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Upload Patient Report</div>
+          <label class="btn sec" for="fileInput" style="display:inline-block; width:auto; margin-bottom:14px">
+            📎 Choose File
+          </label>
+          <input type="file" id="fileInput" style="display:none" onchange="showFile(this)">
+          <div id="fileDrop" style="border:2px dashed #484f58; border-radius:8px; padding:26px; text-align:center; color:var(--muted); font-size:13px">
+            … or drag &amp; drop your report here
+          </div>
+          <div class="out" id="out08">No file selected</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ❌ This fails — the input has display:none, so it is not interactable</span>
+<span class="cm">// driver.findElement(By.id("fileInput")).click();</span>
+
+<span class="cm">// ✅ SOLUTION 1 — sendKeys directly on the hidden input (works in Selenium)</span>
+<span class="ty">String</span> absPath = <span class="kw">new</span> <span class="ty">File</span>(<span class="st">"src/test/resources/report.pdf"</span>).getAbsolutePath();
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"fileInput"</span>)).sendKeys(absPath);
+
+<span class="cm">// ✅ SOLUTION 2 — if sendKeys is blocked, use the LocalFileDetector (remote grids)</span>
+((<span class="ty">RemoteWebDriver</span>) driver).setFileDetector(<span class="kw">new</span> <span class="ty">LocalFileDetector</span>());
+
+<span class="cm">// ✅ SOLUTION 3 — unhide via JavaScript, then sendKeys</span>
+<span class="ty">WebElement</span> input = driver.findElement(<span class="ty">By</span>.id(<span class="st">"fileInput"</span>));
+((<span class="ty">JavascriptExecutor</span>) driver).executeScript(
+        <span class="st">"arguments[0].style.display='block'; arguments[0].style.visibility='visible';"</span>, input);
+input.sendKeys(absPath);
+
+<span class="cm">// ✅ SOLUTION 4 — drag & drop the file using a temp overlay input (Selenium 4 pattern)</span>
+<span class="ty">WebElement</span> dropZone = driver.findElement(<span class="ty">By</span>.id(<span class="st">"fileDrop"</span>));
+<span class="ty">WebElement</span> overlay = (<span class="ty">WebElement</span>) ((<span class="ty">JavascriptExecutor</span>) driver).executeScript(
+    <span class="st">"var i=document.createElement('input');i.type='file';i.id='tmpFile';"</span> +
+    <span class="st">"arguments[0].appendChild(i);return i;"</span>, dropZone);
+overlay.sendKeys(absPath);
+
+<span class="cm">// Verify upload</span>
+<span class="ty">Assert</span>.assertTrue(driver.findElement(<span class="ty">By</span>.id(<span class="st">"out08"</span>)).getText().contains(<span class="st">"report.pdf"</span>));
+
+<span class="cm">// 💡 Interview tip: mention setFileDetector for Selenium Grid / Docker.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 09 ============ -->
+    <section class="card" id="s09" data-domain="healthcare">
+      <div class="card-head">
+        <span class="card-num">09</span>
+        <h3>Checkbox Groups &amp; Radio Buttons</h3>
+        <span class="lvl mid">Medium</span>
+        <span class="dom">healthcare</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Select <em>exactly</em> the symptoms "Fever" and "Cough" (and no others),
+          then pick the gender radio "Female". Verify the selection is exclusive for radios and
+          multi-select for checkboxes. Also test the "Select All" behaviour.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Symptom Checker</div>
+          <div style="margin-bottom:18px">
+            <label style="font-weight:650; margin-bottom:8px">Symptoms</label>
+            <label style="display:flex; gap:8px; align-items:center; margin-bottom:5px; cursor:pointer">
+              <input type="checkbox" class="sym" value="Fever" style="width:auto" onchange="updSymptoms()"> Fever
+            </label>
+            <label style="display:flex; gap:8px; align-items:center; margin-bottom:5px; cursor:pointer">
+              <input type="checkbox" class="sym" value="Cough" style="width:auto" onchange="updSymptoms()"> Cough
+            </label>
+            <label style="display:flex; gap:8px; align-items:center; margin-bottom:5px; cursor:pointer">
+              <input type="checkbox" class="sym" value="Headache" style="width:auto" onchange="updSymptoms()"> Headache
+            </label>
+            <label style="display:flex; gap:8px; align-items:center; margin-bottom:5px; cursor:pointer">
+              <input type="checkbox" class="sym" value="Fatigue" style="width:auto" onchange="updSymptoms()"> Fatigue
+            </label>
+            <button class="btn sec" style="margin-top:8px; font-size:12px; padding:5px 12px" onclick="toggleAllSymptoms()">Toggle Select All</button>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label style="font-weight:650; margin-bottom:8px">Gender</label>
+            <label style="display:inline-flex; gap:6px; align-items:center; margin-right:20px; cursor:pointer">
+              <input type="radio" name="gender" value="Male" style="width:auto" onchange="updSymptoms()"> Male
+            </label>
+            <label style="display:inline-flex; gap:6px; align-items:center; margin-right:20px; cursor:pointer">
+              <input type="radio" name="gender" value="Female" style="width:auto" onchange="updSymptoms()"> Female
+            </label>
+            <label style="display:inline-flex; gap:6px; align-items:center; cursor:pointer">
+              <input type="radio" name="gender" value="Other" style="width:auto" onchange="updSymptoms()"> Other
+            </label>
+          </div>
+
+          <div class="out" id="out09">Nothing selected</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ---- CHECKBOXES: multi-select ----</span>
+<span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; allSymptoms = driver.findElements(<span class="ty">By</span>.cssSelector(<span class="st">".sym"</span>));
+<span class="ty">List</span>&lt;<span class="ty">String</span>&gt; wanted = <span class="ty">Arrays</span>.asList(<span class="st">"Fever"</span>, <span class="st">"Cough"</span>);
+
+<span class="kw">for</span> (<span class="ty">WebElement</span> cb : allSymptoms) {
+    <span class="ty">String</span> label = cb.getAttribute(<span class="st">"value"</span>);
+    <span class="ty">boolean</span> shouldBeChecked = wanted.contains(label);
+
+    <span class="cm">// ⚠️ Always check isSelected() first — clicking twice toggles it OFF</span>
+    <span class="kw">if</span> (cb.isSelected() != shouldBeChecked) {
+        cb.click();
+    }
+}
+
+<span class="cm">// Assert exactly 2 are checked</span>
+<span class="ty">long</span> checkedCount = allSymptoms.stream().filter(<span class="ty">WebElement</span>::isSelected).count();
+<span class="ty">Assert</span>.assertEquals(checkedCount, <span class="nm">2</span>, <span class="st">"Expected exactly 2 symptoms selected"</span>);
+
+<span class="cm">// ---- RADIO BUTTONS: single-select ----</span>
+<span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; genders = driver.findElements(<span class="ty">By</span>.cssSelector(<span class="st">"input[name='gender']"</span>));
+<span class="kw">for</span> (<span class="ty">WebElement</span> r : genders) {
+    <span class="kw">if</span> (r.getAttribute(<span class="st">"value"</span>).equals(<span class="st">"Female"</span>)) {
+        r.click();
+        <span class="kw">break</span>;
+    }
+}
+
+<span class="cm">// Assert exclusivity — only ONE radio in the group can be selected</span>
+<span class="ty">long</span> radioSelected = genders.stream().filter(<span class="ty">WebElement</span>::isSelected).count();
+<span class="ty">Assert</span>.assertEquals(radioSelected, <span class="nm">1</span>);
+
+<span class="cm">// 💡 Interview tip: the isSelected() guard before click() is the #1 thing</span>
+<span class="cm">//    interviewers probe for on checkbox questions.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 10 ============ -->
+    <section class="card" id="s10" data-domain="banking">
+      <div class="card-head">
+        <span class="card-num">10</span>
+        <h3>JavaScript Alerts / Confirm / Prompt</h3>
+        <span class="lvl mid">Medium</span>
+        <span class="dom">banking</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Handle all three native JS dialogs. For the confirm dialog, accept on the
+          first attempt and dismiss on the second. For the prompt, send a value and validate it appears on the page.
+          <strong>Important:</strong> you must switch to the alert <em>before</em> it auto-dismisses.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Fund Transfer Dialogs</div>
+          <div class="row">
+            <button class="btn sec" onclick="jsAlert()">Simple Alert</button>
+            <button class="btn sec" onclick="jsConfirm()">Confirm Dialog</button>
+            <button class="btn sec" onclick="jsPrompt()">Prompt Dialog</button>
+          </div>
+          <div class="out" id="out10">No dialog interaction yet</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">WebDriverWait</span> wait = <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">5</span>));
+
+<span class="cm">// ---- 1. SIMPLE ALERT ----</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[text()='Simple Alert']"</span>)).click();
+<span class="ty">Alert</span> a1 = wait.until(<span class="ty">ExpectedConditions</span>.alertIsPresent());
+System.out.println(<span class="st">"Alert text: "</span> + a1.getText());
+a1.accept();
+
+<span class="cm">// ---- 2. CONFIRM ---- accept once, dismiss once</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[text()='Confirm Dialog']"</span>)).click();
+wait.until(<span class="ty">ExpectedConditions</span>.alertIsPresent()).accept();   <span class="cm">// OK</span>
+
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[text()='Confirm Dialog']"</span>)).click();
+wait.until(<span class="ty">ExpectedConditions</span>.alertIsPresent()).dismiss();  <span class="cm">// Cancel</span>
+
+<span class="cm">// ---- 3. PROMPT ---- sendKeys then accept</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[text()='Prompt Dialog']"</span>)).click();
+<span class="ty">Alert</span> p = wait.until(<span class="ty">ExpectedConditions</span>.alertIsPresent());
+p.sendKeys(<span class="st">"50000"</span>);
+p.accept();
+
+<span class="ty">Assert</span>.assertTrue(driver.findElement(<span class="ty">By</span>.id(<span class="st">"out10"</span>)).getText().contains(<span class="st">"50000"</span>));
+
+<span class="cm">// ⚠️ GOTCHA: if a native alert is open, ANY driver command throws</span>
+<span class="cm">//    UnhandledAlertException. Always wrap in try/finally:</span>
+<span class="kw">try</span> {
+    driver.findElement(<span class="ty">By</span>.id(<span class="st">"someBtn"</span>)).click();
+} <span class="kw">catch</span> (<span class="ty">UnhandledAlertException</span> e) {
+    driver.switchTo().alert().accept();
+}
+
+<span class="cm">// 💡 Interview tip: distinguish native JS alerts (Alert interface) from</span>
+<span class="cm">//    HTML modals (regular DOM elements) — Selenium 4.6+ has native</span>
+<span class="cm">//    WebDriver BiDi for auto-dismissing unexpected alerts.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 11 ============ -->
+    <section class="card" id="s11" data-domain="banking">
+      <div class="card-head">
+        <span class="card-num">11</span>
+        <h3>Bootstrap Modal &amp; Toast Notification</h3>
+        <span class="lvl mid">Medium</span>
+        <span class="dom">banking</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Open the "Confirm Beneficiary" modal, wait for the fade-in animation to finish,
+          click Confirm inside it, then assert the toast message appears <em>and</em> auto-disappears within 4 seconds.
+          Also handle the case where the modal close button is clicked instead.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Beneficiary Management</div>
+          <div class="row">
+            <button class="btn" onclick="openModal()">➕ Add Beneficiary</button>
+            <button class="btn sec" onclick="showToast('Transaction completed successfully')">Trigger Toast</button>
+          </div>
+          <div class="out" id="out11">No action yet</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">WebDriverWait</span> wait = <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">10</span>));
+
+<span class="cm">// ---- MODAL ----</span>
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[contains(.,'Add Beneficiary')]"</span>)).click();
+
+<span class="cm">// Wait for the overlay AND the modal to be visible (animation-safe)</span>
+<span class="ty">WebElement</span> modal = wait.until(
+    <span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(<span class="ty">By</span>.cssSelector(<span class="st">".overlay.show .modal"</span>)));
+
+<span class="cm">// Wait for the modal to STOP moving — critical for fade/scale animations</span>
+wait.until(<span class="ty">ExpectedConditions</span>.attributeContains(
+        <span class="ty">By</span>.cssSelector(<span class="st">".overlay"</span>), <span class="st">"class"</span>, <span class="st">"show"</span>));
+
+<span class="cm">// Scope the click to INSIDE the modal — avoids matching a background button</span>
+modal.findElement(<span class="ty">By</span>.xpath(<span class="st">".//button[text()='Confirm']"</span>)).click();
+
+<span class="cm">// Assert the modal is gone</span>
+wait.until(<span class="ty">ExpectedConditions</span>.invisibilityOf(modal));
+
+<span class="cm">// ---- TOAST ----</span>
+<span class="ty">WebElement</span> toast = wait.until(
+    <span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"toast"</span>)));
+<span class="ty">Assert</span>.assertTrue(toast.getText().contains(<span class="st">"successfully"</span>));
+
+<span class="cm">// Assert the toast AUTO-DISMISSES (the part most candidates forget)</span>
+wait.until(<span class="ty">ExpectedConditions</span>.invisibilityOfElementLocated(<span class="ty">By</span>.id(<span class="st">"toast"</span>)));
+
+<span class="cm">// 💡 Interview tip: scoping findElement to a parent WebElement (modal.findElement)</span>
+<span class="cm">//    is the correct answer to "how do you avoid strict-mode / ambiguity issues".</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 12 ============ -->
+    <section class="card" id="s12" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">12</span>
+        <h3>iframe &amp; Nested iframe Traversal</h3>
+        <span class="lvl expert">Expert</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Interact with an element inside a nested iframe (frame inside a frame).
+          Type a username, click the inner button, then <strong>return to the default content</strong> and
+          verify the outer page is accessible again.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Payment Gateway (nested frames)</div>
+          <iframe id="frame1" title="outer frame"></iframe>
+          <div class="out" id="out12">Not interacted yet</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ---- NESTED IFRAME: must switch level by level ----</span>
+
+<span class="cm">// Level 1 — outer frame</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">10</span>))
+    .until(<span class="ty">ExpectedConditions</span>.frameToBeAvailableAndSwitchToIt(<span class="ty">By</span>.id(<span class="st">"frame1"</span>)));
+
+<span class="cm">// Level 2 — inner frame (found INSIDE the outer frame's document)</span>
+driver.switchTo().frame(<span class="st">"frame2"</span>);
+
+<span class="cm">// Now interact with the innermost element</span>
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"innerUser"</span>)).sendKeys(<span class="st">"qa_user"</span>);
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"innerBtn"</span>)).click();
+
+<span class="cm">// ---- GOING BACK: two ways ----</span>
+<span class="cm">// Way 1: step back one level at a time</span>
+driver.switchTo().parentFrame();   <span class="cm">// back to frame1</span>
+driver.switchTo().parentFrame();   <span class="cm">// back to main page</span>
+
+<span class="cm">// Way 2 (safer): jump straight to the top</span>
+driver.switchTo().defaultContent();
+
+<span class="cm">// Verify we are back on the main page</span>
+<span class="ty">Assert</span>.assertTrue(driver.findElement(<span class="ty">By</span>.id(<span class="st">"out12"</span>)).isDisplayed());
+
+<span class="cm">// ---- Handling a frame that is not yet loaded ----</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">15</span>))
+    .until(<span class="ty">ExpectedConditions</span>.frameToBeAvailableAndSwitchToIt(<span class="ty">By</span>.cssSelector(<span class="st">"iframe[name='payment']"</span>)));
+
+<span class="cm">// 💡 Interview tip: three ways to switch — by index, by name/id, by WebElement.</span>
+<span class="cm">//    Always switchTo().defaultContent() in a finally block.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 13 ============ -->
+    <section class="card" id="s13" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">13</span>
+        <h3>Shadow DOM (Web Components)</h3>
+        <span class="lvl expert">Expert</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> The input below lives inside a <code>#shadow-root</code>. A normal
+          <code>By.id</code> will throw <code>NoSuchElementException</code>. Access it using Selenium 4's
+          <code>getShadowRoot()</code> and interact with it.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Shadow DOM Component</div>
+          <div id="shadowHost"></div>
+          <div class="out" id="out13">Shadow input untouched</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ---- Selenium 4 native Shadow DOM support ----</span>
+<span class="ty">WebElement</span> host = driver.findElement(<span class="ty">By</span>.id(<span class="st">"shadowHost"</span>));
+<span class="ty">SearchContext</span> shadowRoot = host.getShadowRoot();
+
+<span class="cm">// ✅ Works — search INSIDE the shadow root</span>
+<span class="ty">WebElement</span> shadowInput = shadowRoot.findElement(<span class="ty">By</span>.cssSelector(<span class="st">"#shadowInput"</span>));
+shadowInput.sendKeys(<span class="st">"inside shadow dom"</span>);
+
+<span class="cm">// ❌ Fails — By.id does NOT pierce shadow boundaries</span>
+<span class="cm">// driver.findElement(By.id("shadowInput"));</span>
+
+<span class="cm">// ---- NESTED shadow roots ----</span>
+<span class="ty">SearchContext</span> inner = shadowRoot.findElement(<span class="ty">By</span>.cssSelector(<span class="st">"inner-comp"</span>)).getShadowRoot();
+inner.findElement(<span class="ty">By</span>.cssSelector(<span class="st">"button"</span>)).click();
+
+<span class="cm">// ---- FALLBACK for Selenium 3 / older grids: JavaScript injection ----</span>
+<span class="ty">JavascriptExecutor</span> js = (<span class="ty">JavascriptExecutor</span>) driver;
+<span class="ty">WebElement</span> el = (<span class="ty">WebElement</span>) js.executeScript(
+    <span class="st">"return document.querySelector('#shadowHost')"</span> +
+    <span class="st">".shadowRoot.querySelector('#shadowInput');"</span>);
+el.sendKeys(<span class="st">"via js"</span>);
+
+<span class="cm">// 💡 Interview tip: many candidates don't know Selenium 4 added getShadowRoot().</span>
+<span class="cm">//    Mentioning it (and the JS fallback) is a strong differentiator.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 14 ============ -->
+    <section class="card" id="s14" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">14</span>
+        <h3>Multiple Windows / Tabs</h3>
+        <span class="lvl mid">Medium</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Click a link that opens a new tab, switch to it, perform an action, close it,
+          and switch back to the original window. Handle the case where the new tab takes time to open
+          (window count-based wait).
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Report Preview</div>
+          <button class="btn" onclick="openNewWindow()">📄 Open Report in New Tab</button>
+          <div class="out" id="out14">Windows open: 1</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">String</span> originalWindow = driver.getWindowHandle();
+
+<span class="cm">// Capture the set BEFORE clicking</span>
+<span class="ty">Set</span>&lt;<span class="ty">String</span>&gt; before = driver.getWindowHandles();
+
+driver.findElement(<span class="ty">By</span>.xpath(<span class="st">"//button[contains(.,'Open Report')]"</span>)).click();
+
+<span class="cm">// Wait until a NEW window handle exists (handles slow tab creation)</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">10</span>))
+    .until(<span class="ty">ExpectedConditions</span>.numberOfWindowsToBe(<span class="nm">2</span>));
+
+<span class="cm">// Find the new handle by set difference</span>
+<span class="ty">Set</span>&lt;<span class="ty">String</span>&gt; after = driver.getWindowHandles();
+after.removeAll(before);
+<span class="ty">String</span> newWindow = after.iterator().next();
+
+<span class="cm">// Switch and work</span>
+driver.switchTo().window(newWindow);
+System.out.println(<span class="st">"New tab title: "</span> + driver.getTitle());
+<span class="cm">// ... perform actions ...</span>
+
+<span class="cm">// Close the tab and return</span>
+driver.close();                       <span class="cm">// closes the CURRENT window only</span>
+driver.switchTo().window(originalWindow);
+
+<span class="ty">Assert</span>.assertTrue(driver.findElement(<span class="ty">By</span>.id(<span class="st">"out14"</span>)).isDisplayed());
+
+<span class="cm">// 💡 Interview tip: driver.close() vs driver.quit()</span>
+<span class="cm">//    close()  → current window only</span>
+<span class="cm">//    quit()   → all windows + ends the session (always in @AfterMethod)</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 15 ============ -->
+    <section class="card" id="s15" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">15</span>
+        <h3>Hover Menu, Right-Click &amp; Double-Click</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Hover over "Accounts" to reveal a submenu, click "Statements".
+          Then right-click the panel to open a context menu and select "Copy".
+          Finally, double-click the editable field to select all text.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Actions API</div>
+
+          <div class="hover-wrap" style="margin-bottom:20px">
+            <button class="btn sec">Accounts ▾</button>
+            <div class="hover-menu">
+              <div onclick="document.getElementById('out15').textContent='✅ Clicked: Statements'">Statements</div>
+              <div onclick="document.getElementById('out15').textContent='✅ Clicked: Transfer'">Transfer</div>
+              <div onclick="document.getElementById('out15').textContent='✅ Clicked: Cards'">Cards</div>
+            </div>
+          </div>
+
+          <div id="ctxTarget" style="background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:center; font-size:13px; margin-bottom:18px; user-select:none">
+            Right-click me (context menu)
+          </div>
+
+          <div class="field">
+            <label>Double-click to select this text</label>
+            <input type="text" id="dblField" value="SELECT_ME_ON_DOUBLE_CLICK" readonly>
+          </div>
+
+          <div class="out" id="out15">No action yet</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">Actions</span> act = <span class="kw">new</span> <span class="ty">Actions</span>(driver);
+
+<span class="cm">// ---- 1. HOVER ----</span>
+<span class="ty">WebElement</span> accountsMenu = driver.findElement(
+        <span class="ty">By</span>.xpath(<span class="st">"//div[@class='hover-wrap']/button"</span>));
+act.moveToElement(accountsMenu).perform();
+
+<span class="cm">// Submenu is CSS :hover — wait for it to become visible before clicking</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">5</span>))
+    .until(<span class="ty">ExpectedConditions</span>.visibilityOfElementLocated(
+        <span class="ty">By</span>.xpath(<span class="st">"//div[@class='hover-menu']/div[text()='Statements']"</span>)))
+    .click();
+
+<span class="cm">// ---- 2. RIGHT CLICK (context click) ----</span>
+<span class="ty">WebElement</span> panel = driver.findElement(<span class="ty">By</span>.id(<span class="st">"ctxTarget"</span>));
+act.contextClick(panel).perform();
+
+<span class="cm">// A custom DOM context menu (NOT a native alert)</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">5</span>))
+    .until(<span class="ty">ExpectedConditions</span>.elementToBeClickable(
+        <span class="ty">By</span>.xpath(<span class="st">"//div[@id='ctxMenu']/div[text()='Copy']"</span>)))
+    .click();
+
+<span class="cm">// ---- 3. DOUBLE CLICK ----</span>
+<span class="ty">WebElement</span> field = driver.findElement(<span class="ty">By</span>.id(<span class="st">"dblField"</span>));
+act.doubleClick(field).perform();
+
+<span class="cm">// ---- 4. CHAINED ACTIONS (single perform for performance) ----</span>
+act.moveToElement(accountsMenu)
+   .pause(<span class="ty">Duration</span>.ofMillis(<span class="nm">400</span>))
+   .click()
+   .doubleClick(field)
+   .contextClick(panel)
+   .build()
+   .perform();
+
+<span class="cm">// 💡 Interview tip: mention .build().perform() vs .perform(), and that</span>
+<span class="cm">//    Actions must be re-created after each perform() in some drivers.</span>
+<span class="cm">//    Also note: for HTML5 native drag-drop, Actions often FAILS — use JS.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 16 ============ -->
+    <section class="card" id="s16" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">16</span>
+        <h3>Drag &amp; Drop (Mouse-Event Based)</h3>
+        <span class="lvl expert">Expert</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Drag the purple tile into the drop zone. This widget uses raw
+          <code>mousedown / mousemove / mouseup</code> (not the HTML5 DnD API), so
+          <code>Actions.dragAndDrop()</code> <em>should</em> work. Also know the fallback for HTML5 DnD.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Kanban Board</div>
+          <div class="drag-area">
+            <div id="dragItem" draggable="false">🟣 Drag Me</div>
+            <div id="dropZone">Drop Here</div>
+          </div>
+          <div class="out" id="out16">Not dropped yet</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">WebElement</span> source = driver.findElement(<span class="ty">By</span>.id(<span class="st">"dragItem"</span>));
+<span class="ty">WebElement</span> target = driver.findElement(<span class="ty">By</span>.id(<span class="st">"dropZone"</span>));
+
+<span class="cm">// ---- METHOD 1: the simple one-liner ----</span>
+<span class="kw">new</span> <span class="ty">Actions</span>(driver).dragAndDrop(source, target).perform();
+
+<span class="cm">// ---- METHOD 2: manual click-and-hold (more reliable, more human-like) ----</span>
+<span class="ty">Actions</span> act = <span class="kw">new</span> <span class="ty">Actions</span>(driver);
+act.moveToElement(source)
+   .clickAndHold()
+   .pause(<span class="ty">Duration</span>.ofMillis(<span class="nm">500</span>))   <span class="cm">// let the UI register the drag start</span>
+   .moveToElement(target)
+   .pause(<span class="ty">Duration</span>.ofMillis(<span class="nm">300</span>))
+   .release()
+   .perform();
+
+<span class="cm">// ---- METHOD 3: offset-based (when the target centre is wrong) ----</span>
+act.moveToElement(source).clickAndHold()
+   .moveByOffset(<span class="nm">200</span>, <span class="nm">0</span>)
+   .release().perform();
+
+<span class="cm">// ---- METHOD 4: JS fallback for HTML5 native drag-drop ----</span>
+<span class="ty">String</span> js =
+  <span class="st">"function createEvent(type, el){var e=document.createEvent('DragEvent');"</span> +
+  <span class="st">"e.initEvent(type,true,true);el.dispatchEvent(e);}"</span> +
+  <span class="st">"var s=arguments[0], t=arguments[1];"</span> +
+  <span class="st">"createEvent('dragstart',s); createEvent('drop',t); createEvent('dragend',s);"</span>;
+((<span class="ty">JavascriptExecutor</span>) driver).executeScript(js, source, target);
+
+<span class="ty">Assert</span>.assertEquals(driver.findElement(<span class="ty">By</span>.id(<span class="st">"out16"</span>)).getText(),
+                     <span class="st">"Dropped successfully! ✅"</span>);
+
+<span class="cm">// 💡 Interview tip: the killer answer is knowing that Actions.dragAndDrop()</span>
+<span class="cm">//    FAILS on HTML5 draggable="true" elements and you need the JS fallback.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 17 ============ -->
+    <section class="card" id="s17" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">17</span>
+        <h3>Slider &amp; Keyboard Actions</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Move the salary slider to exactly <strong>₹75,000</strong> using keyboard
+          arrow keys (mouse offsets are unreliable). Then use keyboard shortcuts to select-all, copy, and
+          paste into a second field.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Loan Eligibility</div>
+          <div class="field">
+            <label>Monthly Salary: <strong id="sliderVal" style="color:var(--accent)">₹50,000</strong></label>
+            <input type="range" id="salarySlider" min="10000" max="200000" step="5000" value="50000"
+                   oninput="document.getElementById('sliderVal').textContent='₹'+Number(this.value).toLocaleString('en-IN')">
+          </div>
+
+          <div class="row" style="margin-top:20px">
+            <div>
+              <label>Source</label>
+              <input type="text" id="keySource" value="COPY_THIS_VALUE">
+            </div>
+            <div>
+              <label>Destination</label>
+              <input type="text" id="keyDest" placeholder="paste here">
+            </div>
+          </div>
+
+          <div class="out" id="out17">Slider at ₹50,000</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ---- SLIDER: keyboard is far more reliable than mouse offsets ----</span>
+<span class="ty">WebElement</span> slider = driver.findElement(<span class="ty">By</span>.id(<span class="st">"salarySlider"</span>));
+slider.click();                              <span class="cm">// focus the slider first</span>
+
+<span class="cm">// Current = 50000, target = 75000, step = 5000 → 5 ARROW_RIGHT presses</span>
+<span class="ty">int</span> steps = (<span class="nm">75000</span> - <span class="nm">50000</span>) / <span class="nm">5000</span>;
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i &lt; steps; i++) {
+    slider.sendKeys(<span class="ty">Keys</span>.ARROW_RIGHT);
+}
+
+<span class="ty">Assert</span>.assertEquals(slider.getAttribute(<span class="st">"value"</span>), <span class="st">"75000"</span>);
+
+<span class="cm">// ⚠️ Mouse-offset approach — brittle, depends on element width in pixels:</span>
+<span class="cm">// new Actions(driver).dragAndDropBy(slider, 60, 0).perform();</span>
+
+<span class="cm">// ---- KEYBOARD SHORTCUTS (copy / paste) ----</span>
+<span class="ty">WebElement</span> src  = driver.findElement(<span class="ty">By</span>.id(<span class="st">"keySource"</span>));
+<span class="ty">WebElement</span> dest = driver.findElement(<span class="ty">By</span>.id(<span class="st">"keyDest"</span>));
+
+src.click();
+<span class="ty">String</span> selectAll = <span class="ty">Keys</span>.chord(<span class="ty">Keys</span>.CONTROL, <span class="st">"a"</span>);
+<span class="ty">String</span> copy      = <span class="ty">Keys</span>.chord(<span class="ty">Keys</span>.CONTROL, <span class="st">"c"</span>);
+<span class="ty">String</span> paste     = <span class="ty">Keys</span>.chord(<span class="ty">Keys</span>.CONTROL, <span class="st">"v"</span>);
+
+src.sendKeys(selectAll, copy);
+dest.click();
+dest.sendKeys(selectAll, paste);
+
+<span class="ty">Assert</span>.assertEquals(dest.getAttribute(<span class="st">"value"</span>), <span class="st">"COPY_THIS_VALUE"</span>);
+
+<span class="cm">// ---- OTHER USEFUL KEYS ----</span>
+driver.findElement(<span class="ty">By</span>.id(<span class="st">"search"</span>)).sendKeys(<span class="st">"laptop"</span>, <span class="ty">Keys</span>.ENTER);
+element.sendKeys(<span class="ty">Keys</span>.TAB);
+element.sendKeys(<span class="ty">Keys</span>.ESCAPE);
+element.sendKeys(<span class="ty">Keys</span>.chord(<span class="ty">Keys</span>.SHIFT, <span class="ty">Keys</span>.TAB));   <span class="cm">// reverse tab</span>
+
+<span class="cm">// 💡 Interview tip: Keys.chord() for combinations, and note that</span>
+<span class="cm">//    sendKeys on a range input changes value — that's the clean answer.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 18 ============ -->
+    <section class="card" id="s18" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">18</span>
+        <h3>StaleElementReferenceException Handling</h3>
+        <span class="lvl expert">Expert</span>
+        <span class="dom">general</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> This list auto-refreshes every 3 seconds (simulating a live dashboard).
+          Iterate all rows and click a button — you'll hit <code>StaleElementReferenceException</code>.
+          Implement a retry wrapper that survives the refresh.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Live Transaction Feed (auto-refreshes every 3s)</div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px">
+            <span class="pill wait" id="refreshTimer">Refreshing in 3s…</span>
+            <button class="btn sec" style="font-size:12px; padding:5px 12px" onclick="toggleRefresh()">⏸ Pause Auto-Refresh</button>
+          </div>
+          <table>
+            <thead><tr><th>Txn ID</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="liveBody"></tbody>
+          </table>
+          <div class="out" id="out18">Ready</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ---- ❌ THE NAIVE (FLAKY) APPROACH ----</span>
+<span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; rows = driver.findElements(<span class="ty">By</span>.cssSelector(<span class="st">"#liveBody tr"</span>));
+<span class="kw">for</span> (<span class="ty">WebElement</span> r : rows) {
+    r.findElement(<span class="ty">By</span>.cssSelector(<span class="st">"button"</span>)).click();   <span class="cm">// 💥 StaleElementReferenceException</span>
+}
+
+<span class="cm">// ---- ✅ SOLUTION 1: RE-LOCATE inside the loop ----</span>
+<span class="ty">int</span> rowCount = driver.findElements(<span class="ty">By</span>.cssSelector(<span class="st">"#liveBody tr"</span>)).size();
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i &lt; rowCount; i++) {
+    <span class="cm">// Fresh lookup by INDEX on every iteration</span>
+    <span class="ty">WebElement</span> btn = driver.findElements(
+            <span class="ty">By</span>.cssSelector(<span class="st">"#liveBody tr"</span>)).get(i)
+            .findElement(<span class="ty">By</span>.cssSelector(<span class="st">"button"</span>));
+    btn.click();
+}
+
+<span class="cm">// ---- ✅ SOLUTION 2: RETRY WRAPPER (production-grade) ----</span>
+<span class="kw">public</span> <span class="ty">void</span> <span class="fn">clickWithRetry</span>(<span class="ty">By</span> locator, <span class="ty">int</span> maxAttempts) {
+    <span class="kw">for</span> (<span class="ty">int</span> attempt = <span class="nm">1</span>; attempt &lt;= maxAttempts; attempt++) {
+        <span class="kw">try</span> {
+            <span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="ty">Duration</span>.ofSeconds(<span class="nm">5</span>))
+                .until(<span class="ty">ExpectedConditions</span>.elementToBeClickable(locator))
+                .click();
+            <span class="kw">return</span>;                       <span class="cm">// success</span>
+        } <span class="kw">catch</span> (<span class="ty">StaleElementReferenceException</span> e) {
+            System.out.println(<span class="st">"Stale on attempt "</span> + attempt + <span class="st">", retrying…"</span>);
+        }
+    }
+    <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(<span class="st">"Element stayed stale after "</span> + maxAttempts + <span class="st">" attempts"</span>);
+}
+
+<span class="cm">// ---- ✅ SOLUTION 3: ExpectedConditions.refreshed() ----</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="ty">Duration</span>.ofSeconds(<span class="nm">10</span>))
+    .until(<span class="ty">ExpectedConditions</span>.refreshed(
+        <span class="ty">ExpectedConditions</span>.elementToBeClickable(<span class="ty">By</span>.cssSelector(<span class="st">"#liveBody tr:nth-child(1) button"</span>))))
+    .click();
+
+<span class="cm">// 💡 Interview tip: explain the ROOT CAUSE — the DOM node was replaced, so the</span>
+<span class="cm">//    cached WebElement reference points to a detached node. The fix is always</span>
+<span class="cm">//    "re-locate the element", never "add Thread.sleep()".</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 19 ============ -->
+    <section class="card" id="s19" data-domain="ecommerce">
+      <div class="card-head">
+        <span class="card-num">19</span>
+        <h3>Lazy Loading / Infinite Scroll</h3>
+        <span class="lvl hard">Hard</span>
+        <span class="dom">e-commerce</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Scroll the container to load more products. Keep scrolling until
+          <em>"Product #50"</em> is present or the "End of results" marker appears. Then scroll back up
+          and verify the first item is still there.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Product Feed (infinite scroll)</div>
+          <div class="scrollbox" id="scrollBox">
+            <div id="lazyContainer"></div>
+            <div id="lazyLoader" style="text-align:center; padding:14px; color:var(--muted); font-size:12.5px">
+              Scroll down to load more…
+            </div>
+          </div>
+          <div class="out" id="out19">Items loaded: 10</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="ty">JavascriptExecutor</span> js = (<span class="ty">JavascriptExecutor</span>) driver;
+<span class="ty">WebElement</span> box = driver.findElement(<span class="ty">By</span>.id(<span class="st">"scrollBox"</span>));
+
+<span class="ty">int</span> previousCount = <span class="nm">0</span>;
+<span class="ty">int</span> stableRounds  = <span class="nm">0</span>;
+<span class="ty">int</span> maxScrolls    = <span class="nm">30</span>;
+
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i &lt; maxScrolls; i++) {
+
+    <span class="cm">// Scroll the INNER container, not the window</span>
+    js.executeScript(<span class="st">"arguments[0].scrollTop = arguments[0].scrollHeight;"</span>, box);
+
+    <span class="cm">// Give the AJAX loader a moment to append rows</span>
+    <span class="kw">try</span> { <span class="ty">Thread</span>.sleep(<span class="nm">600</span>); } <span class="kw">catch</span> (<span class="ty">InterruptedException</span> ignored) {}
+
+    <span class="ty">int</span> currentCount = driver.findElements(<span class="ty">By</span>.cssSelector(<span class="st">".lazy-item"</span>)).size();
+
+    <span class="cm">// Stop condition 1: we found the target item</span>
+    <span class="kw">if</span> (!driver.findElements(<span class="ty">By</span>.xpath(
+            <span class="st">"//div[@class='lazy-item'][contains(.,'Product #50')]"</span>)).isEmpty()) {
+        System.out.println(<span class="st">"Found Product #50 after "</span> + i + <span class="st">" scrolls"</span>);
+        <span class="kw">break</span>;
+    }
+
+    <span class="cm">// Stop condition 2: nothing new loaded twice in a row → end of feed</span>
+    <span class="kw">if</span> (currentCount == previousCount) {
+        <span class="kw">if</span> (++stableRounds &gt;= <span class="nm">2</span>) {
+            System.out.println(<span class="st">"Reached end of feed. Total items = "</span> + currentCount);
+            <span class="kw">break</span>;
+        }
+    } <span class="kw">else</span> {
+        stableRounds = <span class="nm">0</span>;
+    }
+    previousCount = currentCount;
+}
+
+<span class="cm">// Scroll back to the top and verify the first item survived</span>
+js.executeScript(<span class="st">"arguments[0].scrollTop = 0;"</span>, box);
+<span class="ty">Assert</span>.assertTrue(driver.findElement(<span class="ty">By</span>.cssSelector(<span class="st">".lazy-item"</span>))
+                       .getText().contains(<span class="st">"Product #1"</span>));
+
+<span class="cm">// 💡 Interview tip: the "stableRounds" guard is what interviewers want —</span>
+<span class="cm">//    it prevents an infinite loop when the feed genuinely ends.</span>
+<span class="cm">//    Note: a fixed Thread.sleep here is acceptable ONLY as a poll interval;</span>
+<span class="cm">//    a WebDriverWait on item-count growth is the cleaner alternative.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 20 ============ -->
+    <section class="card" id="s20" data-domain="banking">
+      <div class="card-head">
+        <span class="card-num">20</span>
+        <h3>Dynamic Web Table with Search &amp; Filter</h3>
+        <span class="lvl expert">Expert</span>
+        <span class="dom">banking</span>
+      </div>
+      <div class="card-body">
+        <div class="task">
+          <strong>Task:</strong> Search for a customer by name. Extract the entire row as a
+          <code>Map&lt;String, String&gt;</code> (column header → cell value). Then filter by status "Active"
+          and assert that <strong>every</strong> visible row has status Active. This is the classic
+          "print all data from a WebTable" interview question.
+        </div>
+        <div class="sandbox">
+          <div class="sandbox-title">Live Sandbox — Customer Accounts</div>
+          <div class="row" style="margin-bottom:14px">
+            <div>
+              <label>Search Customer</label>
+              <input type="text" id="custSearch" placeholder="Type a name…" oninput="filterCustomers()">
+            </div>
+            <div>
+              <label>Status Filter</label>
+              <select id="statusFilter" onchange="filterCustomers()">
+                <option value="">All</option>
+                <option>Active</option>
+                <option>Dormant</option>
+                <option>Closed</option>
+              </select>
+            </div>
+          </div>
+          <table id="custTable">
+            <thead>
+              <tr>
+                <th>Customer ID</th><th>Name</th><th>Account Type</th>
+                <th>Balance (₹)</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="custBody"></tbody>
+          </table>
+          <div class="out" id="out20">Showing 8 of 8 customers</div>
+        </div>
+
+        <details>
+          <summary>Show Java + Selenium 4 Solution</summary>
+<pre><code><span class="cm">// ================================================================</span>
+<span class="cm">// PART 1 — Extract a single row into a Map&lt;Header, CellValue&gt;</span>
+<span class="cm">// ================================================================</span>
+<span class="kw">public</span> <span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; <span class="fn">getRowAsMap</span>(<span class="ty">String</span> customerName) {
+
+    <span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; headers = driver.findElements(
+            <span class="ty">By</span>.cssSelector(<span class="st">"#custTable thead th"</span>));
+
+    <span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; rows = driver.findElements(
+            <span class="ty">By</span>.cssSelector(<span class="st">"#custBody tr"</span>));
+
+    <span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; rowData = <span class="kw">new</span> <span class="ty">LinkedHashMap</span>&lt;&gt;();
+
+    <span class="kw">for</span> (<span class="ty">WebElement</span> row : rows) {
+        <span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; cells = row.findElements(<span class="ty">By</span>.tagName(<span class="st">"td"</span>));
+        <span class="kw">if</span> (cells.isEmpty()) <span class="kw">continue</span>;
+
+        <span class="cm">// Match by the Name column (index 1) — dynamic column order safe</span>
+        <span class="kw">if</span> (!cells.get(<span class="nm">1</span>).getText().trim().equalsIgnoreCase(customerName)) <span class="kw">continue</span>;
+
+        <span class="kw">for</span> (<span class="ty">int</span> c = <span class="nm">0</span>; c &lt; headers.size(); c++) {
+            rowData.put(headers.get(c).getText().trim(), cells.get(c).getText().trim());
+        }
+        <span class="kw">break</span>;
+    }
+    <span class="kw">return</span> rowData;
+}
+
+<span class="cm">// Usage</span>
+<span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; cust = getRowAsMap(<span class="st">"Priya Sharma"</span>);
+System.out.println(cust.get(<span class="st">"Balance (₹)"</span>));   <span class="cm">// column lookup by NAME, not index ✅</span>
+
+<span class="cm">// ================================================================</span>
+<span class="cm">// PART 2 — Filter by status and assert EVERY row</span>
+<span class="cm">// ================================================================</span>
+<span class="kw">new</span> <span class="ty">Select</span>(driver.findElement(<span class="ty">By</span>.id(<span class="st">"statusFilter"</span>)))
+        .selectByVisibleText(<span class="st">"Active"</span>);
+
+<span class="cm">// Wait for the table to re-render after filtering</span>
+<span class="kw">new</span> <span class="ty">WebDriverWait</span>(driver, <span class="nm">Duration</span>.ofSeconds(<span class="nm">5</span>))
+    .until(<span class="ty">ExpectedConditions</span>.invisibilityOfElementLocated(
+        <span class="ty">By</span>.xpath(<span class="st">"//td[text()='Dormant']"</span>)));
+
+<span class="ty">List</span>&lt;<span class="ty">WebElement</span>&gt; statusCells = driver.findElements(
+        <span class="ty">By</span>.xpath(<span class="st">"//tbody[@id='custBody']/tr/td[5]"</span>));
+
+<span class="ty">Assert</span>.assertFalse(statusCells.isEmpty(), <span class="st">"Filter returned zero rows"</span>);
+
+<span class="kw">for</span> (<span class="ty">WebElement</span> cell : statusCells) {
+    <span class="ty">Assert</span>.assertEquals(cell.getText().trim(), <span class="st">"Active"</span>,
+        <span class="st">"Non-Active row leaked through the filter"</span>);
+}
+
+<span class="cm">// ================================================================</span>
+<span class="cm">// PART 3 — Find a specific cell in a HUGE table without hardcoding indexes</span>
+<span class="cm">// ================================================================</span>
+<span class="ty">String</span> balance = driver.findElement(<span class="ty">By</span>.xpath(
+    <span class="st">"//table[@id='custTable']//tr[td[text()='Priya Sharma']]/td[4]"</span>)).getText();
+
+<span class="cm">// 💡 Interview tip: returning a Map keyed by header name (not index) is the</span>
+<span class="cm">//    answer that separates a 5-year engineer from a 1-year engineer.</span>
+<span class="cm">//    Column indexes break the moment a new column is added.</span></code></pre>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ Q&A ============ -->
+    <section class="card" id="qa" data-domain="general">
+      <div class="card-head">
+        <span class="card-num">★</span>
+        <h3>Senior-Level Interview Q&amp;A (5+ Years)</h3>
+        <span class="lvl expert">Expert</span>
+        <span class="dom">reference</span>
+      </div>
+      <div class="card-body">
+
+        <div class="qa">
+          <h4>Q1. Your test passes locally but fails on the CI grid. How do you debug?</h4>
+          <p>First, reproduce with the same browser/version and headless flag — headless Chrome renders differently (viewport, fonts, animations). Enable a screenshot-on-failure listener plus Extent Reports attachments. Check for: missing explicit waits (grid is slower), file-upload paths (need <code>LocalFileDetector</code>), screen resolution affecting element visibility, and parallel execution sharing driver state. Use a <code>ThreadLocal&lt;WebDriver&gt;</code> for thread safety.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q2. How do you decide between implicit, explicit, and fluent waits?</h4>
+          <p>Never mix implicit and explicit — they compound unpredictably. Use <strong>explicit waits only</strong>, scoped to specific conditions. Use <code>FluentWait</code> when you need custom polling intervals or to ignore specific exceptions. Implicit waits are a global band-aid and hide real synchronisation bugs.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q3. How would you architect a framework from scratch?</h4>
+          <p><strong>Layered:</strong> (1) <em>DriverFactory</em> with ThreadLocal for parallel execution; (2) <em>Page Objects</em> with <code>@FindBy</code> + PageFactory or a custom <code>ElementActions</code> wrapper; (3) <em>Test layer</em> with TestNG + DataProviders; (4) <em>Reporting</em> via Extent Reports with ITestListener; (5) <em>Config</em> via owner/config.properties for env switching; (6) <em>CI</em> via Jenkins/GitHub Actions with Selenium Grid or Docker. Add a <code>RetryAnalyzer</code> for flaky tests and log every failure with a screenshot.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q4. How do you handle a flaky test that fails 1 in 20 runs?</h4>
+          <p>Never just add retries. First, classify: is it <em>product flakiness</em>, <em>test flakiness</em>, or <em>infra flakiness</em>? Capture the DOM snapshot + screenshot + browser console logs on failure. Common root causes: missing wait on an async state change, animation timing, shared test data between parallel tests, or a stale element. Fix the root cause; use <code>IRetryAnalyzer</code> only as a temporary safety net and track the retry rate as a metric.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q5. How do you test REST APIs alongside your UI tests?</h4>
+          <p>Use <strong>Rest Assured</strong> for API-level setup and teardown to make UI tests faster and more deterministic — create test data via API instead of clicking through the UI. Validate the contract with JSON Schema, use <code>given().spec(requestSpec).when().get("/endpoint").then().statusCode(200).body("id", notNullValue())</code>. For hybrid tests, log in via API, inject the session cookie into the browser, and jump straight to the target page.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q6. How do you integrate Appium into the same framework?</h4>
+          <p>Abstract the driver creation behind a factory: <code>WebDriver</code> for web, <code>AndroidDriver</code>/<code>IOSDriver</code> for mobile — both implement <code>WebDriver</code>, so Page Objects can be shared where UI patterns match. Keep separate locator strategies (Accessibility ID / UiAutomator for Android, XCUITest for iOS). Run on a real device cloud (BrowserStack/Sauce Labs) or a local Appium server with <code>UiAutomator2</code> driver. Use the <code>--relaxed-security</code> flag only in non-prod.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q7. How do you generate a professional Extent Report?</h4>
+          <p>Use <code>ExtentSparkReporter</code> with a custom theme and system info. Attach screenshots to failures via <code>test.fail("msg", MediaEntityBuilder.createScreenCaptureFromPath(path).build())</code>. Implement <code>ITestListener</code> to hook <code>onTestSuccess/Failure/Skip</code> and a <code>@BeforeMethod</code> to create the test entry. Always include the environment, browser version, and base URL in the report header — reviewers need that context.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q8. Your locator breaks after a UI redesign. How do you future-proof?</h4>
+          <p>Advocate for <code>data-testid</code> attributes agreed with the dev team. Prefer stable semantic attributes (<code>name</code>, <code>aria-label</code>, <code>role</code>) over auto-generated CSS classes like <code>css-1x9k2</code>. Centralise locators in Page Objects so a change touches one file. Use relative locators (Selenium 4 <code>RelativeLocator.with()</code>) for layout-based relationships. Never use absolute XPath like <code>/html/body/div[3]/div[2]/span</code>.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q9. How do you reduce a 4-hour regression suite to under 40 minutes?</h4>
+          <p>(1) Parallelise with TestNG <code>parallel="methods"</code> + ThreadLocal drivers on a Grid/Docker. (2) Replace UI setup with API calls. (3) Run only a smoke subset on every commit, full regression nightly. (4) Eliminate redundant <code>Thread.sleep()</code> — measure and remove. (5) Use headless mode for CI. (6) Remove duplicate coverage between UI and API layers. (7) Profile the slowest 20 tests — they're usually 60% of the runtime.</p>
+        </div>
+
+        <div class="qa">
+          <h4>Q10. How do you handle dynamic test data across parallel runs?</h4>
+          <p>Generate unique data per thread — append <code>System.currentTimeMillis()</code> or a UUID to usernames/emails. Never share a fixed test account across parallel threads. Use a JSON/Excel DataProvider with thread-safe indexing, or generate data programmatically. Clean up via <code>@AfterMethod</code> API deletes so runs are idempotent and repeatable.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ GLOBAL WIDGETS ============ -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Confirm Beneficiary</h3>
+    <p>Are you sure you want to add this beneficiary? This action requires OTP verification.</p>
+    <div class="row">
+      <button class="btn grn" onclick="confirmModal()">Confirm</button>
+      <button class="btn sec" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="ctxMenu">
+  <div onclick="ctxAction('Copy')">Copy</div>
+  <div onclick="ctxAction('Paste')">Paste</div>
+  <div onclick="ctxAction('Inspect')">Inspect</div>
+</div>
+
+<div id="toast">Operation successful</div>
+
+<script>
+/* ================= FILTER ================= */
+document.querySelectorAll('.filters button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.card').forEach(card => {
+      if (f === 'all' || card.dataset.domain === f || card.id === 'qa') {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+/* ================= 01 · DYNAMIC LOCATORS ================= */
+function regenId() {
+  const el = document.querySelector('[data-testid="dyn-user"]');
+  const oldId = el.id;
+  el.id = 'dyn-' + Math.random().toString(36).slice(2, 8);
+  document.getElementById('out01').textContent =
+    `🔄 ID changed: #${oldId} → #${el.id}  (data-testid stays stable ✅)`;
+}
+regenId();
+
+function revealDelayed() {
+  const slot = document.getElementById('delayedSlot');
+  slot.innerHTML = '<span style="color:var(--muted); font-size:13px">⏳ loading…</span>';
+  setTimeout(() => {
+    slot.innerHTML = '<input type="text" id="lateField" placeholder="I appeared after 3s">';
+    document.getElementById('out01').textContent = '✅ Delayed field rendered (id=lateField)';
+  }, 3000);
+}
+
+let vanishTimer = null;
+function startDisappear() {
+  const slot = document.getElementById('vanishSlot');
+  slot.innerHTML = '<span class="pill wait" id="vanishEl">I vanish in 5s ⏳</span>';
+  document.getElementById('out01').textContent = '⏳ Element visible — it will disappear in 5s';
+  clearTimeout(vanishTimer);
+  vanishTimer = setTimeout(() => {
+    slot.innerHTML = '<span style="color:var(--muted); font-size:13px">💨 gone</span>';
+    document.getElementById('out01').textContent = '💨 Element disappeared at ' + new Date().toLocaleTimeString();
+  }, 5000);
+}
+
+function armDelayedBtn() {
+  const b = document.getElementById('delayedBtn');
+  b.disabled = true;
+  b.textContent = 'Submit (disabled 4s)';
+  document.getElementById('out01').textContent = '⏳ Button disabled — enabling in 4s';
+  setTimeout(() => {
+    b.disabled = false;
+    b.textContent = 'Submit ✅';
+    document.getElementById('out01').textContent = '✅ Button is now clickable';
+  }, 4000);
+}
+
+/* ================= 02 · AUTOCOMPLETE ================= */
+const PRODUCTS = ['iPhone 15 Pro','iPhone 15','iPad Air','MacBook Pro 14"',
+  'Samsung Galaxy S24','Sony WH-1000XM5','Dell XPS 13','Logitech MX Master 3',
+  'Apple Watch Series 9','Google Pixel 8'];
+
+function handleSearch(val) {
+  const box = document.getElementById('suggestBox');
+  if (!val || val.length < 2) { box.style.display = 'none'; return; }
+  const matches = PRODUCTS.filter(p => p.toLowerCase().includes(val.toLowerCase()));
+  if (!matches.length) { box.style.display = 'none'; return; }
+  box.innerHTML = matches.map(m => `<div onclick="pickProduct('${m.replace(/'/g,"\\'")}')">${m}</div>`).join('');
+  box.style.display = 'block';
+}
+
+function pickProduct(name) {
+  document.getElementById('searchInput').value = name;
+  document.getElementById('suggestBox').style.display = 'none';
+  document.getElementById('out02').textContent = 'Selected: ' + name;
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#searchInput') && !e.target.closest('#suggestBox')) {
+    const b = document.getElementById('suggestBox');
+    if (b) b.style.display = 'none';
+  }
+});
+
+/* ================= 03 · CART ================= */
+const CATALOG = [
+  {name:'Wireless Mouse', price:1299.00},
+  {name:'Mechanical Keyboard', price:3499.00},
+  {name:'4K Monitor', price:24999.00},
+  {name:'USB-C Hub', price:1899.00},
+  {name:'Laptop Stand', price:999.00},
+  {name:'Webcam 1080p', price:2799.00}
+];
+let cart = [];
+
+function renderProducts() {
+  document.getElementById('productGrid').innerHTML = CATALOG.map((p,i) => `
+    <div class="product" data-product="${p.name}">
+      <div class="pname">${p.name}</div>
+      <div class="pprice">₹${p.price.toFixed(2)}</div>
+      <button class="btn" style="font-size:12px; padding:5px 12px" onclick="addToCart(${i})">Add to Cart</button>
+    </div>`).join('');
+}
+
+function addToCart(i) {
+  cart.push(CATALOG[i]);
+  updateCart();
+  document.getElementById('out03').textContent = `Added "${CATALOG[i].name}" · ${cart.length} item(s) in cart`;
+}
+
+function updateCart() {
+  document.getElementById('cartBadge').textContent = cart.length;
+  const total = cart.reduce((s,p) => s + p.price, 0);
+  document.getElementById('cartTotal').textContent = total.toFixed(2);
+}
+renderProducts();
+
+/* ================= 04 · TABLE SORT + PAGINATION ================= */
+const ORDERS = [
+  ['ORD-1001','Wireless Mouse',1299,'Delivered'],
+  ['ORD-1002','4K Monitor',24999,'Shipped'],
+  ['ORD-1003','USB-C Hub',1899,'Pending'],
+  ['ORD-1004','Mechanical Keyboard',3499,'Delivered'],
+  ['ORD-1005','Laptop Stand',999,'Cancelled'],
+  ['ORD-1006','Webcam 1080p',2799,'Shipped'],
+  ['ORD-1007','Wireless Mouse',1299,'Pending'],
+  ['ORD-1008','4K Monitor',24999,'Delivered'],
+  ['ORD-1009','USB-C Hub',1899,'Shipped'],
+  ['ORD-1010','Mechanical Keyboard',3499,'Pending'],
+  ['ORD-1011','Laptop Stand',999,'Delivered'],
+  ['ORD-1012','Webcam 1080p',2799,'Cancelled']
+];
+let orderData = [...ORDERS];
+let page = 1, sortKey = null, sortAsc = true;
+const PER_PAGE = 4;
+
+const STATUS_CLASS = {Delivered:'ok', Shipped:'wait', Pending:'wait', Cancelled:'no'};
+
+function renderOrders() {
+  const start = (page-1)*PER_PAGE;
+  const slice = orderData.slice(start, start+PER_PAGE);
+  document.getElementById('orderBody').innerHTML = slice.map(r => `
+    <tr>
+      <td>${r[0]}</td>
+      <td>${r[1]}</td>
+      <td>${r[2]}</td>
+      <td><span class="pill ${STATUS_CLASS[r[3]]||''}">${r[3]}</span></td>
+    </tr>`).join('');
+  document.getElementById('pageNum').textContent = page;
+}
+
+function sortTable(key) {
+  const idx = {id:0, product:1, price:2, status:3}[key];
+  if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = true; }
+  orderData.sort((a,b) => {
+    let x = a[idx], y = b[idx];
+    if (typeof x === 'number') return sortAsc ? x-y : y-x;
+    return sortAsc ? String(x).localeCompare(String(y)) : String(y).localeCompare(String(x));
+  });
+  page = 1;
+  renderOrders();
+  document.getElementById('out04').textContent =
+    `Sorted by "${key}" ${sortAsc ? 'ASC ▲' : 'DESC ▼'} — page reset to 1`;
+}
+
+function changePage(dir) {
+  const maxPage = Math.ceil(orderData.length / PER_PAGE);
+  const next = page + dir;
+  if (next < 1 || next > maxPage) return;
+  page = next;
+  renderOrders();
+  document.getElementById('out04').textContent = `Navigated to page ${page}`;
+}
+renderOrders();
+
+/* ================= 05 · COUPON ================= */
+function applyCoupon() {
+  const code = document.getElementById('couponInput').value.trim().toUpperCase();
+  const out = document.getElementById('out05');
+  out.className = 'out';
+
+  if (!code) {
+    out.textContent = 'Please enter a coupon code';
+    out.style.color = 'var(--orange)';
+  } else if (code === 'QA2026') {
+    out.textContent = '✅ Coupon applied — 20% discount (₹959.80 off)';
+    out.style.color = 'var(--green)';
+  } else if (code === 'EXPIRED') {
+    out.textContent = '❌ Coupon has expired';
+    out.style.color = 'var(--red)';
+  } else {
+    out.textContent = '❌ Invalid coupon code';
+    out.style.color = 'var(--red)';
+  }
+}
+
+/* ================= 06 · WIZARD ================= */
+let wizStep = 1;
+const WIZ_TOTAL = 4;
+
+function wizNav(dir) {
+  if (dir === 1 && !validateStep(wizStep)) return;
+  wizStep = Math.max(1, Math.min(WIZ_TOTAL, wizStep + dir));
+  renderWizard();
+}
+
+function validateStep(step) {
+  const out = document.getElementById('out06');
+  if (step === 1) {
+    const n = document.getElementById('patName').value.trim();
+    const p = document.getElementById('patPhone').value.trim();
+    if (n.length < 3) { out.textContent = '⚠️ Name must be at least 3 characters'; return false; }
+    if (!/^\d{10}$/.test(p)) { out.textContent = '⚠️ Mobile must be exactly 10 digits'; return false; }
+  }
+  if (step === 2) {
+    if (!document.getElementById('patDept').value) { out.textContent = '⚠️ Please select a department'; return false; }
+    if (!document.getElementById('patType').value) { out.textContent = '⚠️ Please select a consultation type'; return false; }
+  }
+  if (step === 3) {
+    if (!document.getElementById('patDate').value.trim()) { out.textContent = '⚠️ Please enter a date'; return false; }
+    if (!document.getElementById('patSlot').value) { out.textContent = '⚠️ Please select a time slot'; return false; }
+  }
+  return true;
+}
+
+function renderWizard() {
+  for (let i=1;i<=WIZ_TOTAL;i++) {
+    document.getElementById('wp'+i).classList.toggle('active', i===wizStep);
+    const ind = document.getElementById('stepInd'+i);
+    ind.classList.toggle('active', i===wizStep);
+    ind.classList.toggle('done', i<wizStep);
+  }
+  document.getElementById('wizBack').disabled = wizStep === 1;
+  document.getElementById('wizNext').textContent = wizStep === WIZ_TOTAL ? '✅ Confirm Booking' : 'Next →';
+  document.getElementById('out06').textContent = `Step ${wizStep} of ${WIZ_TOTAL}`;
+
+  if (wizStep === WIZ_TOTAL) {
+    const id = 'APT-' + Math.floor(10000 + Math.random()*90000);
+    document.getElementById('summaryBox').innerHTML = `
+      <div>👤 <strong>Patient:</strong> <span id="sumName">${document.getElementById('patName').value}</span></div>
+      <div>📞 <strong>Mobile:</strong> ${document.getElementById('patPhone').value}</div>
+      <div>🏥 <strong>Department:</strong> ${document.getElementById('patDept').value}</div>
+      <div>💬 <strong>Type:</strong> ${document.getElementById('patType').value}</div>
+      <div>📅 <strong>Date:</strong> ${document.getElementById('patDate').value}</div>
+      <div>🕐 <strong>Slot:</strong> ${document.getElementById('patSlot').value}</div>
+      <div style="margin-top:10px; color:var(--green); font-weight:700">Appointment ID: ${id}</div>`;
+    document.getElementById('out06').textContent = 'Appointment confirmed — ID ' + id;
+  }
+}
+renderWizard();
+
+/* ================= 07 · CALENDAR ================= */
+function buildCalendar() {
+  const cal = document.getElementById('calendar');
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const monthName = now.toLocaleString('default', {month:'long'});
+
+  let html = `<div class="cal-head">${monthName} ${y}</div><div class="cal-grid">`;
+  ['S','M','T','W','T','F','S'].forEach(d => html += `<span class="cal-dow">${d}</span>`);
+  for (let i=0;i<firstDay;i++) html += '<span></span>';
+  for (let d=1; d<=daysInMonth; d++) {
+    html += `<span class="cal-day" data-day="${d}" onclick="pickDay(${d})">${d}</span>`;
+  }
+  html += '</div>';
+  cal.innerHTML = html;
+}
+
+function pickDay(d) {
+  const now = new Date();
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const val = `${d}/${mm}/${now.getFullYear()}`;
+  document.getElementById('apptDate').value = val;
+  document.querySelectorAll('.cal-day').forEach(el => el.classList.remove('selected'));
+  const target = document.querySelector(`.cal-day[data-day="${d}"]`);
+  if (target) target.classList.add('selected');
+  document.getElementById('out07').textContent = 'Selected date: ' + val;
+}
+buildCalendar();
+
+/* ================= 08 · FILE UPLOAD ================= */
+function showFile(input) {
+  const name = input.files.length ? input.files[0].name : 'none';
+  document.getElementById('out08').textContent = '📎 Uploaded: ' + name;
+}
+
+const dropZone = document.getElementById('fileDrop');
+['dragenter','dragover'].forEach(ev =>
+  dropZone.addEventListener(ev, e => {
+    e.preventDefault();
+    dropZone.style.borderColor = 'var(--accent)';
+    dropZone.style.color = 'var(--accent)';
+  }));
+['dragleave','drop'].forEach(ev =>
+  dropZone.addEventListener(ev, e => {
+    e.preventDefault();
+    dropZone.style.borderColor = '#484f58';
+    dropZone.style.color = 'var(--muted)';
+  }));
+dropZone.addEventListener('drop', e => {
+  const f = e.dataTransfer.files[0];
+  if (f) document.getElementById('out08').textContent = '📎 Dropped: ' + f.name;
+});
+
+/* ================= 09 · CHECKBOXES ================= */
+function updSymptoms() {
+  const syms = [...document.querySelectorAll('.sym:checked')].map(c => c.value);
+  const gender = document.querySelector('input[name="gender"]:checked');
+  document.getElementById('out09').textContent =
+    `Symptoms [${syms.length}]: ${syms.join(', ') || 'none'} · Gender: ${gender ? gender.value : 'none'}`;
+}
+
+function toggleAllSymptoms() {
+  const boxes = document.querySelectorAll('.sym');
+  const allChecked = [...boxes].every(b => b.checked);
+  boxes.forEach(b => b.checked = !allChecked);
+  updSymptoms();
+}
+
+/* ================= 10 · JS DIALOGS ================= */
+function jsAlert() {
+  alert('Your account balance is ₹1,25,430.00');
+  document.getElementById('out10').textContent = 'Simple alert accepted';
+}
+function jsConfirm() {
+  const ok = confirm('Do you want to proceed with the fund transfer of ₹50,000?');
+  document.getElementById('out10').textContent = ok ? '✅ Confirm: ACCEPTED' : '❌ Confirm: DISMISSED';
+}
+function jsPrompt() {
+  const v = prompt('Enter the OTP sent to your registered mobile:', '');
+  document.getElementById('out10').textContent =
+    v === null ? 'Prompt dismissed' : 'OTP entered: ' + v;
+}
+
+/* ================= 11 · MODAL & TOAST ================= */
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('out11').textContent = 'Modal opened';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.getElementById('out11').textContent = 'Modal cancelled (dismissed)';
+}
+function confirmModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.getElementById('out11').textContent = '✅ Beneficiary confirmed';
+  showToast('Beneficiary added successfully');
+}
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ================= 12 · IFRAMES ================= */
+(function buildFrames() {
+  const f1 = document.getElementById('frame1');
+  f1.srcdoc = `<html><body style="font-family:system-ui;background:#0d1117;color:#e6edf3;padding:14px;margin:0">
+    <div style="font-size:11px;color:#8b949e;letter-spacing:1px;margin-bottom:10px">OUTER FRAME (id=frame1)</div>
+    <iframe id="frame2" style="width:100%;height:95px;border:1px solid #30363d;border-radius:6px"></iframe>
+  </body></html>`;
+
+  f1.onload = () => {
+    const f2 = f1.contentDocument.getElementById('frame2');
+    if (!f2) return;
+    f2.srcdoc = `<html><body style="font-family:system-ui;background:#10151c;color:#e6edf3;padding:12px;margin:0">
+      <div style="font-size:11px;color:#8b949e;letter-spacing:1px;margin-bottom:8px">INNER FRAME (id=frame2)</div>
+      <input id="innerUser" placeholder="username" style="background:#0d1117;border:1px solid #30363d;color:#e6edf3;padding:6px 9px;border-radius:5px;font-size:12px;width:140px">
+      <button id="innerBtn" style="background:#58a6ff;color:#0d1117;border:none;padding:6px 12px;border-radius:5px;font-size:12px;font-weight:600;margin-left:6px;cursor:pointer"
+        onclick="document.getElementById('innerUser').value='CLICKED!'">Click</button>
+    </body></html>`;
+  };
+})();
+
+/* ================= 13 · SHADOW DOM ================= */
+(function buildShadow() {
+  const host = document.getElementById('shadowHost');
+  const root = host.attachShadow({mode:'open'});
+  root.innerHTML = `
+    <style>
+      .wrap{font-family:system-ui;color:#e6edf3}
+      .lbl{font-size:11px;color:#8b949e;letter-spacing:1px;margin-bottom:8px}
+      input{background:#0d1117;border:1px solid #30363d;color:#e6edf3;padding:7px 10px;
+            border-radius:6px;font-size:13px;width:200px;outline:none}
+      input:focus{border-color:#bc8cff}
+      button{background:#bc8cff;color:#0d1117;border:none;padding:7px 14px;border-radius:6px;
+             font-size:12px;font-weight:700;margin-left:8px;cursor:pointer}
+    </style>
+    <div class="wrap">
+      <div class="lbl">#shadow-root (open)</div>
+      <input id="shadowInput" placeholder="inside shadow dom">
+      <button id="shadowBtn" onclick="this.textContent='✅ Clicked!'">Click</button>
+    </div>`;
+})();
+
+/* ================= 14 · MULTIPLE WINDOWS ================= */
+function openNewWindow() {
+  const w = window.open('', '_blank', 'width=640,height=460');
+  if (!w) {
+    document.getElementById('out14').textContent = '⚠️ Popup blocked — allow popups for this page';
+    return;
+  }
+  w.document.write(`<html><head><title>Transaction Report</title></head>
+    <body style="font-family:system-ui;background:#0d1117;color:#e6edf3;padding:32px">
+      <h2 style="color:#58a6ff;margin-bottom:12px">Transaction Report</h2>
+      <p style="color:#8b949e;font-size:14px;margin-bottom:20px">This is the child window — handle it with driver.getWindowHandles()</p>
+      <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;font-size:13px;line-height:1.9">
+        <div>Reference: <strong>TXN-2026-44821</strong></div>
+        <div>Amount: <strong>₹50,000.00</strong></div>
+        <div>Status: <strong style="color:#3fb950">Completed</strong></div>
+      </div>
+      <button id="childBtn" style="margin-top:20px;background:#3fb950;color:#0d1117;border:none;padding:9px 18px;border-radius:6px;font-weight:700;cursor:pointer"
+        onclick="this.textContent='✅ Child action done'">Child Action</button>
+    </body></html>`);
+  w.document.close();
+  document.getElementById('out14').textContent = 'Windows open: 2 (check your new tab)';
+}
+
+/* ================= 15 · CONTEXT MENU ================= */
+const ctxTarget = document.getElementById('ctxTarget');
+const ctxMenu = document.getElementById('ctxMenu');
+
+ctxTarget.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  ctxMenu.style.display = 'block';
+  ctxMenu.style.left = e.pageX + 'px';
+  ctxMenu.style.top = e.pageY + 'px';
+});
+
+document.addEventListener('click', () => { ctxMenu.style.display = 'none'; });
+
+function ctxAction(action) {
+  document.getElementById('out15').textContent = `✅ Context menu action: ${action}`;
+  ctxMenu.style.display = 'none';
+}
+
+/* ================= 16 · DRAG & DROP ================= */
+(function initDrag() {
+  const item = document.getElementById('dragItem');
+  const zone = document.getElementById('dropZone');
+  let dragging = false, offX = 0, offY = 0;
+
+  item.addEventListener('mousedown', e => {
+    dragging = true;
+    const r = item.getBoundingClientRect();
+    offX = e.clientX - r.left;
+    offY = e.clientY - r.top;
+    item.style.position = 'fixed';
+    item.style.zIndex = '9999';
+    item.style.pointerEvents = 'none';
+    item.style.left = r.left + 'px';
+    item.style.top = r.top + 'px';
+    item.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    item.style.left = (e.clientX - offX) + 'px';
+    item.style.top = (e.clientY - offY) + 'px';
+  });
+
+  document.addEventListener('mouseup', e => {
+    if (!dragging) return;
+    dragging = false;
+    const z = zone.getBoundingClientRect();
+    const inside = e.clientX >= z.left && e.clientX <= z.right &&
+                   e.clientY >= z.top && e.clientY <= z.bottom;
+
+    item.style.position = '';
+    item.style.left = '';
+    item.style.top = '';
+    item.style.zIndex = '';
+    item.style.pointerEvents = '';
+    item.style.cursor = 'grab';
+    document.body.style.userSelect = '';
+
+    if (inside) {
+      zone.textContent = '✅ Dropped!';
+      zone.classList.add('dropped');
+      document.getElementById('out16').textContent = 'Dropped successfully! ✅';
+    } else {
+      document.getElementById('out16').textContent = '❌ Dropped outside the zone — try again';
+    }
+  });
+})();
+
+/* ================= 17 · SLIDER ================= */
+document.getElementById('salarySlider').addEventListener('input', function () {
+  document.getElementById('out17').textContent =
+    'Slider at ₹' + Number(this.value).toLocaleString('en-IN');
+});
+
+/* ================= 18 · STALE ELEMENT ================= */
+let refreshPaused = false;
+let refreshCountdown = 3;
+
+function renderLiveRows() {
+  const statuses = ['Success','Pending','Failed'];
+  const rows = Array.from({length:5}, (_,i) => {
+    const amt = (Math.floor(Math.random()*90)+10) * 1000;
+    const st = statuses[Math.floor(Math.random()*3)];
+    return `<tr>
+      <td>TXN-${1000 + i}</td>
+      <td>₹${amt.toLocaleString('en-IN')}</td>
+      <td><span class="pill ${st==='Success'?'ok':st==='Pending'?'wait':'no'}">${st}</span></td>
+      <td><button class="btn sec" style="font-size:11px;padding:4px 10px"
+           onclick="document.getElementById('out18').textContent='Clicked TXN-${1000+i}'">View</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('liveBody').innerHTML = rows;
+}
+
+setInterval(() => {
+  if (refreshPaused) return;
+  refreshCountdown--;
+  if (refreshCountdown <= 0) {
+    renderLiveRows();
+    refreshCountdown = 3;
+  }
+  const t = document.getElementById('refreshTimer');
+  if (t) t.textContent = `Refreshing in ${refreshCountdown}s…`;
+}, 1000);
+renderLiveRows();
+
+function toggleRefresh() {
+  refreshPaused = !refreshPaused;
+  document.getElementById('refreshTimer').textContent = refreshPaused ? '⏸ Auto-refresh paused' : 'Refreshing in 3s…';
+}
+renderLiveRows();
+
+/* ================= 19 · LAZY LOAD ================= */
+let lazyIndex = 1;
+const LAZY_STEP = 10;
+const LAZY_MAX = 60;
+
+function loadMoreLazy() {
+  const container = document.getElementById('lazyContainer');
+  const end = Math.min(lazyIndex + LAZY_STEP - 1, LAZY_MAX);
+  let html = '';
+  for (let i = lazyIndex; i <= end; i++) {
+    html += `<div class="lazy-item">
+      <span>Product #${i}</span>
+      <span style="color:var(--green); font-family:ui-monospace,monospace">₹${(i*349).toLocaleString('en-IN')}</span>
+    </div>`;
+  }
+  container.insertAdjacentHTML('beforeend', html);
+  lazyIndex = end + 1;
+
+  const loader = document.getElementById('lazyLoader');
+  loader.textContent = lazyIndex > LAZY_MAX ? '🏁 End of results' : 'Scroll down to load more…';
+  document.getElementById('out19').textContent = `Items loaded: ${end}`;
+}
+loadMoreLazy();
+
+document.getElementById('scrollBox').addEventListener('scroll', function () {
+  if (this.scrollTop + this.clientHeight >= this.scrollHeight - 30) {
+    if (lazyIndex <= LAZY_MAX) loadMoreLazy();
+  }
+});
+
+/* ================= 20 · CUSTOMER TABLE ================= */
+const CUSTOMERS = [
+  ['CUST-001','Priya Sharma','Savings',245000,'Active'],
+  ['CUST-002','Rahul Verma','Current',890000,'Active'],
+  ['CUST-003','Anita Desai','Savings',12000,'Dormant'],
+  ['CUST-004','Karthik Iyer','Fixed Deposit',1500000,'Active'],
+  ['CUST-005','Meera Nair','Savings',67500,'Closed'],
+  ['CUST-006','Arjun Rao','Current',340000,'Active'],
+  ['CUST-007','Sneha Gupta','Savings',8900,'Dormant'],
+  ['CUST-008','Vikram Singh','Fixed Deposit',2200000,'Active']
+];
+
+function filterCustomers() {
+  const q = document.getElementById('custSearch').value.toLowerCase().trim();
+  const st = document.getElementById('statusFilter').value;
+  const filtered = CUSTOMERS.filter(r =>
+    r[1].toLowerCase().includes(q) && (!st || r[3] === st)
+  );
+  renderCustomers(filtered);
+  document.getElementById('out20').textContent =
+    `Showing ${filtered.length} of ${CUSTOMERS.length} customers` +
+    (st ? ` · status = ${st}` : '');
+}
+
+function renderCustomers(rows) {
+  const body = document.getElementById('custBody');
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:22px">No matching records</td></tr>';
+    return;
+  }
+  body.innerHTML = rows.map(r => `
+    <tr>
+      <td>${r[0]}</td>
+      <td>${r[1]}</td>
+      <td>${r[2]}</td>
+      <td>${r[3].toLocaleString('en-IN')}</td>
+      <td><span class="pill ${r[4]==='Active'?'ok':r[4]==='Closed'?'no':'wait'}">${r[4]}</span></td>
+    </tr>`).join('');
+}
+renderCustomers(CUSTOMERS);
+
+/* ================= MODAL ESC ================= */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('modalOverlay').classList.remove('show');
+    ctxMenu.style.display = 'none';
+  }
+});
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+</script>
+</body>
+</html>
